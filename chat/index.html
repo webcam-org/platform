@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Random Video Chat | webcam.org</title>
+  <meta name="description" content="Connect randomly with strangers via webcam. Free video chat with text messaging. Meet new people instantly." />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; margin: 0; background: #0b1020; color: #e6e7eb; }
+    header, footer { padding: 12px 16px; background: #0d1428; border-bottom: 1px solid #182245; }
+    main { padding: 16px; max-width: 1200px; margin: 0 auto; }
+    .title { font-size: 20px; font-weight: 600; color: #a5c3ff; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .panel { background: #0f1730; border: 1px solid #182245; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; }
+    .video-container { position: relative; width: 100%; padding-bottom: 75%; /* 4:3 aspect ratio */ background: #000; border-radius: 8px; overflow: hidden; }
+    video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    button { background: #2a4fff; color: white; border: none; border-radius: 8px; padding: 10px 14px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    button.secondary { background: #1a223f; color: #c6d3ff; }
+    button.danger { background: #e03131; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .status { margin-top: 8px; color: #9db2ff; min-height: 20px; font-size: 14px; }
+    .badge { display: inline-block; padding: 2px 8px; background: #16204a; border: 1px solid #1e2a66; border-radius: 999px; color: #c6d3ff; font-size: 12px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .muted { opacity: 0.8; }
+    .hint { color: #8fa1d8; font-size: 13px; margin-top: 8px; }
+    h2 { margin: 0 0 12px 0; font-size: 18px; }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; gap: 12px; }
+      main { padding: 12px; }
+      header, footer { padding: 8px 12px; }
+      .title { font-size: 16px; }
+      h2 { font-size: 16px; }
+      button { padding: 8px 12px; font-size: 13px; }
+      .controls { gap: 6px; }
+    }
+
+    /* Age gate overlay */
+    #ageGate { display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(11, 16, 32, 0.98); z-index: 1000; justify-content: center; align-items: center; }
+    #ageGate.hidden { display: none; }
+    .age-box { background: #0f1730; border: 1px solid #182245; border-radius: 12px; padding: 32px; max-width: 450px; width: 90%; text-align: center; }
+    .age-box h2 { color: #a5c3ff; margin-bottom: 16px; font-size: 24px; }
+    .age-box p { color: #9db2ff; margin-bottom: 24px; line-height: 1.5; }
+    .age-box .warning { color: #ff6b6b; font-weight: 600; margin-bottom: 24px; }
+    .age-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .age-buttons button { min-width: 120px; padding: 12px 24px; font-size: 16px; }
+    .age-buttons button.exit { background: #e03131; }
+
+    /* Chat box */
+    .chat-container { background: #0d1428; border: 1px solid #182245; border-radius: 8px; margin-top: 12px; display: flex; flex-direction: column; height: 200px; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .chat-message { padding: 6px 10px; border-radius: 6px; font-size: 14px; word-wrap: break-word; }
+    .chat-message.local { background: #2a4fff; color: white; align-self: flex-end; max-width: 70%; }
+    .chat-message.remote { background: #1a223f; color: #c6d3ff; align-self: flex-start; max-width: 70%; }
+    .chat-message.system { background: transparent; color: #8fa1d8; font-size: 12px; font-style: italic; align-self: center; }
+    .chat-input-container { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #182245; }
+    .chat-input-container input { flex: 1; background: #0f1730; border: 1px solid #182245; border-radius: 6px; padding: 8px 12px; color: #e6e7eb; font-size: 14px; }
+    .chat-input-container input::placeholder { color: #6b7ba8; }
+    .chat-input-container input:focus { outline: none; border-color: #2a4fff; }
+    .chat-input-container button { padding: 8px 16px; }
+  </style>
+  <script>
+    // Age verification gate
+    (function() {
+      const AGE_VERIFIED_KEY = 'age_verified_18plus';
+      const isAgeVerified = localStorage.getItem(AGE_VERIFIED_KEY) === 'true';
+
+      if (!isAgeVerified) {
+        // Show age gate on page load
+        document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('ageGate').classList.remove('hidden');
+        });
+      }
+
+      window.confirmAge = function() {
+        localStorage.setItem(AGE_VERIFIED_KEY, 'true');
+        document.getElementById('ageGate').classList.add('hidden');
+      };
+
+      window.exitSite = function() {
+        window.location.href = 'https://www.google.com';
+      };
+
+      // Optional token handling - store if provided in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlToken = urlParams.get('token');
+      if (urlToken) {
+        localStorage.setItem('auth_token', urlToken);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    })();
+  </script>
+  <script defer src="/js/roulette.js"></script>
+  <script>
+    // Basic HTTPS reminder for camera access
+    document.addEventListener('DOMContentLoaded', () => {
+      if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+        console.warn('Camera access typically requires HTTPS.');
+      }
+    });
+  </script>
+  
+</head>
+<body>
+  <!-- Age Verification Gate -->
+  <div id="ageGate" class="hidden">
+    <div class="age-box">
+      <h2>⚠️ Age Verification Required</h2>
+      <p>This website contains video chat with strangers and may include adult content.</p>
+      <p class="warning">You must be 18 years or older to enter.</p>
+      <p style="font-size: 13px; color: #8fa1d8;">By entering, you agree to our <a href="/terms.html" target="_blank" style="color: #2a4fff;">Terms of Service</a> and <a href="/privacy.html" target="_blank" style="color: #2a4fff;">Privacy Policy</a>.</p>
+      <div class="age-buttons">
+        <button onclick="confirmAge()">I am 18 or Older</button>
+        <button class="exit" onclick="exitSite()">Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="row">
+    <div class="title">webcam.org — Random Video Chat</div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <a href="/directory" style="color: #9db2ff; text-decoration: none; font-size: 14px;">Browse Webcams</a>
+      <span id="connBadge" class="badge">Connecting…</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="panel">
+        <h2>Partner</h2>
+        <div class="video-container">
+          <video id="remoteVideo" playsinline autoplay></video>
+        </div>
+        <div class="status" id="remoteStatus">Waiting for a partner…</div>
+      </section>
+
+      <section class="panel">
+        <h2>You</h2>
+        <div class="video-container">
+          <video id="localVideo" playsinline autoplay muted class="muted"></video>
+        </div>
+        <div class="controls">
+          <button id="startBtn">Start</button>
+          <button id="nextBtn" class="secondary" disabled>Next</button>
+          <button id="muteBtn" class="secondary" disabled>Mute</button>
+          <button id="cameraBtn" class="secondary" disabled>Camera Off</button>
+          <button id="leaveBtn" class="danger" disabled>Leave</button>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="hint">Tip: Click Next to find a new partner.</div>
+      </section>
+    </div>
+
+    <!-- Text Chat -->
+    <div class="chat-container">
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-message system">Text chat will appear here when connected</div>
+      </div>
+      <div class="chat-input-container">
+        <input type="text" id="chatInput" placeholder="Type a message..." disabled />
+        <button id="sendBtn" class="secondary" disabled>Send</button>
+      </div>
+    </div>
+  </main>
+
+  <footer style="padding: 24px 16px; text-align: center; border-top: 1px solid #182245; margin-top: 24px;">
+    <div style="margin-bottom: 12px;">
+      <a href="/" style="color: #9db2ff; text-decoration: none; margin: 0 12px;">Home</a>
+      <a href="/terms.html" style="color: #9db2ff; text-decoration: none; margin: 0 12px;">Terms</a>
+      <a href="/privacy.html" style="color: #9db2ff; text-decoration: none; margin: 0 12px;">Privacy</a>
+      <a href="/directory" style="color: #9db2ff; text-decoration: none; margin: 0 12px;">Browse Webcams</a>
+    </div>
+    <small style="color: #8fa1d8;">&copy; 2025 webcam.org - Random Video Chat</small>
+  </footer>
+</body>
+</html>
+

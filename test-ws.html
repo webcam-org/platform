@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h1>WebSocket Test</h1>
+    <button onclick="connect()">Connect</button>
+    <button onclick="send()">Send Message</button>
+    <div id="log"></div>
+
+    <script>
+        let ws;
+
+        function log(msg) {
+            document.getElementById('log').innerHTML += msg + '<br>';
+            console.log(msg);
+        }
+
+        function connect() {
+            ws = new WebSocket('ws://webcam.org:8004/test');
+
+            ws.onopen = () => {
+                log('Connected!');
+            };
+
+            ws.onmessage = (event) => {
+                log('Received: ' + event.data);
+            };
+
+            ws.onerror = (error) => {
+                log('Error: ' + error);
+            };
+
+            ws.onclose = () => {
+                log('Disconnected');
+            };
+        }
+
+        function send() {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send('Hello from browser!');
+            } else {
+                log('Not connected');
+            }
+        }
+    </script>
+</body>
+</html>

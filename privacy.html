@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | webcam.org</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { max-width: 900px; margin: 0 auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+    h1 { color: #1a73e8; }
+    h2 { color: #333; margin-top: 32px; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px; }
+    .promise { background: #e8f0fe; padding: 24px; border-left: 4px solid #1a73e8; margin: 20px 0; }
+    .collect { background: #e6f4ea; padding: 16px; border-left: 4px solid #1e8e3e; margin: 20px 0; }
+    .not-collect { background: #fce8e6; padding: 16px; border-left: 4px solid #d93025; margin: 20px 0; }
+    ul { margin: 12px 0; }
+    li { margin-bottom: 8px; }
+    a { color: #1a73e8; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">webcam.org</div>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/#public-cams">Browse Public Cams</a>
+        <a href="/#self-hosted">Install Self-Hosted Security</a>
+        <a href="/test">Test Your Webcam</a>
+        <a href="/blog">Blog</a>
+      </nav>
+    </div>
+  </header>
+
+  <h1>Privacy Policy</h1>
+  <p><strong>Effective:</strong> [BETA] | <strong>Last Updated:</strong> November 4, 2025</p>
+
+  <div class="promise">
+    <h3>🔒 Our Privacy Promise</h3>
+    <p><strong>webcam.org is built on one principle: Your cameras, your data, your control.</strong></p>
+    <p>Unlike Ring, Nest, and other corporate surveillance platforms, we believe privacy is a right, not a feature you pay for.</p>
+  </div>
+
+  <h2>1. What We Collect</h2>
+
+  <div class="collect">
+    <h3>✅ Data We DO Collect:</h3>
+    <p><strong>Account Information:</strong></p>
+    <ul>
+      <li>Email address (for login)</li>
+      <li>Username (public display name)</li>
+      <li>Password (encrypted with bcrypt - we cannot see it)</li>
+      <li>Subscription tier (free, plus, pro)</li>
+    </ul>
+
+    <p><strong>Camera Metadata (NOT Video):</strong></p>
+    <ul>
+      <li>Camera name, description, type</li>
+      <li>GPS location (only if you mark camera public)</li>
+      <li>Technical details (resolution, FPS)</li>
+      <li>Last seen timestamp</li>
+      <li>Thumbnail images (public cameras only)</li>
+    </ul>
+
+    <p><strong>Mobile App Data:</strong></p>
+    <ul>
+      <li>Device type (iOS/Android)</li>
+      <li>Push notification token</li>
+      <li>App version</li>
+    </ul>
+
+    <p><strong>Usage Analytics (Anonymized):</strong></p>
+    <ul>
+      <li>Pages visited (via Google Analytics)</li>
+      <li>Feature usage</li>
+      <li>Error logs (to fix bugs)</li>
+    </ul>
+  </div>
+
+  <h2>2. What We Do NOT Collect</h2>
+
+  <div class="not-collect">
+    <h3>❌ Data We DO NOT Collect:</h3>
+    <ul>
+      <li><strong>Your private camera video feeds</strong> (video stays on your device)</li>
+      <li><strong>Live surveillance footage</strong> (we cannot watch your cameras)</li>
+      <li><strong>Audio recordings</strong> (unless you upload clips)</li>
+      <li><strong>Biometric data</strong> (facial recognition, fingerprints)</li>
+      <li><strong>Precise home address</strong> (only GPS if you share publicly)</li>
+      <li><strong>Payment card details</strong> (handled by Stripe)</li>
+      <li><strong>Passwords in plain text</strong> (encrypted)</li>
+    </ul>
+  </div>
+
+  <h2>3. Technical Proof</h2>
+
+  <p><strong>Private Cameras:</strong></p>
+  <ul>
+    <li>Stream via WebRTC peer-to-peer (direct device-to-device)</li>
+    <li>Or through Tailscale VPN (encrypted tunnel)</li>
+    <li>We only provide "signaling" (helping devices find each other)</li>
+    <li>We NEVER see your video</li>
+  </ul>
+
+  <p><strong>Self-Hosted Software:</strong></p>
+  <ul>
+    <li>All AI detection runs on YOUR hardware</li>
+    <li>Video stored on YOUR hard drive or cloud storage</li>
+    <li>Our plugin only sends event metadata (not video)</li>
+  </ul>
+
+  <p><strong>Open Source:</strong></p>
+  <ul>
+    <li>Our code is on GitHub (link coming soon)</li>
+    <li>Security researchers can verify these claims</li>
+    <li>No hidden data collection</li>
+  </ul>
+
+  <h2>4. How We Use Your Information</h2>
+
+  <p><strong>To Provide the Service:</strong></p>
+  <ul>
+    <li>Authenticate your login</li>
+    <li>Register and manage your cameras</li>
+    <li>Send push notifications (person detected, doorbell press)</li>
+    <li>Display public cameras on the map</li>
+    <li>Process payments (via Stripe)</li>
+  </ul>
+
+  <p><strong>What We Do NOT Do:</strong></p>
+  <ul>
+    <li>❌ Sell your data to third parties</li>
+    <li>❌ Show you targeted ads</li>
+    <li>❌ Share data with police without legal process</li>
+    <li>❌ Train AI models on your private footage</li>
+    <li>❌ Use your cameras for our own surveillance</li>
+  </ul>
+
+  <h2>5. Data Sharing</h2>
+
+  <p><strong>What We Share Publicly (if you mark camera public):</strong></p>
+  <ul>
+    <li>Camera name, description, GPS location</li>
+    <li>Thumbnail image</li>
+    <li>Live stream (visible to anyone)</li>
+  </ul>
+
+  <p><strong>Service Providers We Use:</strong></p>
+  <ul>
+    <li>Firebase (push notifications)</li>
+    <li>Stripe (payments - PCI-DSS compliant)</li>
+    <li>Amazon S3 (cloud backup if enabled)</li>
+    <li>Google Analytics (anonymized stats)</li>
+  </ul>
+
+  <p><strong>Legal Requirements:</strong></p>
+  <ul>
+    <li>We may disclose data if required by valid subpoena or court order</li>
+    <li>We notify users before disclosure unless legally prohibited</li>
+    <li>We require proper legal process (no informal police requests)</li>
+    <li><strong>Unlike Ring:</strong> We have NO agreements with police for warrantless access</li>
+  </ul>
+
+  <h2>6. Your Rights</h2>
+
+  <p><strong>You Can:</strong></p>
+  <ul>
+    <li>View all your account data in settings</li>
+    <li>Export your camera metadata (JSON format)</li>
+    <li>Download your cloud backup clips</li>
+    <li>Edit account information anytime</li>
+    <li>Make cameras public or private</li>
+    <li>Disable cloud backup</li>
+    <li>Delete your entire account (permanent)</li>
+  </ul>
+
+  <p><strong>GDPR (EU Users):</strong></p>
+  <ul>
+    <li>Right to access your data</li>
+    <li>Right to rectification (correct errors)</li>
+    <li>Right to erasure ("right to be forgotten")</li>
+    <li>Right to data portability</li>
+    <li>Contact: gdpr@webcam.org</li>
+  </ul>
+
+  <p><strong>CCPA (California Users):</strong></p>
+  <ul>
+    <li>Right to know what data is collected</li>
+    <li>Right to delete personal information</li>
+    <li>Right to opt-out of "sale" (we don't sell data)</li>
+    <li>Contact: privacy@webcam.org</li>
+  </ul>
+
+  <h2>7. Data Storage & Security</h2>
+
+  <p><strong>Where Data is Stored:</strong></p>
+  <ul>
+    <li>User data: PostgreSQL database (US East)</li>
+    <li>Metadata: Encrypted at rest</li>
+    <li>Video clips (if cloud backup): Amazon S3 encrypted</li>
+    <li>Passwords: Bcrypt hashed</li>
+  </ul>
+
+  <p><strong>Security Measures:</strong></p>
+  <ul>
+    <li>HTTPS/TLS encryption for all connections</li>
+    <li>Two-factor authentication available</li>
+    <li>Regular security audits</li>
+    <li>Encrypted database backups</li>
+  </ul>
+
+  <p><strong>Data Retention:</strong></p>
+  <ul>
+    <li>Account data: Until you delete your account</li>
+    <li>Public camera listings: Until you remove from directory</li>
+    <li>Cloud backup clips: 7 days (Plus) or 30 days (Pro), then auto-deleted</li>
+    <li>Logs: 90 days for security</li>
+  </ul>
+
+  <h2>8. Children's Privacy</h2>
+  <p>webcam.org is not intended for children under 18. We do not knowingly collect data from anyone under 18. If we discover a child's data, we delete it immediately.</p>
+
+  <h2>9. Changes to Policy</h2>
+  <p>We may update this policy. Significant changes will be announced via email and in-app notification. Continued use after changes = acceptance.</p>
+
+  <h2>10. Contact Us</h2>
+  <ul>
+    <li><strong>Privacy Questions:</strong> privacy@webcam.org</li>
+    <li><strong>GDPR (EU):</strong> gdpr@webcam.org</li>
+    <li><strong>Security Issues:</strong> security@webcam.org</li>
+    <li><strong>General Support:</strong> support@webcam.org</li>
+  </ul>
+
+  <div class="promise" style="margin-top: 40px;">
+    <h3>Our Commitment</h3>
+    <p><strong>Privacy is not a feature you pay for at webcam.org - it's our foundation.</strong></p>
+    <ul>
+      <li>We will never sell your data</li>
+      <li>We will never give warrantless police access</li>
+      <li>We will notify you before complying with legal requests (when legally allowed)</li>
+      <li>We will keep our code open source so you can verify these promises</li>
+    </ul>
+  </div>
+
+  <footer>
+      <div class="container">
+          <div class="footer-links">
+              <div class="footer-column">
+                  <h4>For Camera Owners</h4>
+                  <a href="#">Installation Guide</a>
+                  <a href="#">Compatible Hardware</a>
+                  <a href="#">Docker Setup</a>
+              </div>
+              <div class="footer-column">
+                  <h4>For Browsers</h4>
+                  <a href="#">Camera Map</a>
+                  <a href="#">Mobile Apps</a>
+                  <a href="#">Popular Locations</a>
+              </div>
+              <div class="footer-column">
+                  <h4>Company</h4>
+                  <a href="#">About</a>
+                  <a href="/blog">Blog</a>
+                  <a href="#">GitHub</a>
+                  <a href="/privacy.html">Privacy Policy</a>
+                  <a href="/terms.html">Terms of Service</a>
+                  <a href="#">Contact</a>
+              </div>
+          </div>
+          <div class="copyright">
+              © 2025 webcam.org • Open source • Privacy-first • Community-driven
+          </div>
+      </div>
+  </footer>
+</body>
+</html>

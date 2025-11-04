@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Webcam + Music Mixer | webcam.org</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: #0b1020;
+      color: #e6e7eb;
+    }
+
+    /* Setup screen */
+    #setup {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    #setup.hidden { display: none; }
+
+    .setup-container {
+      background: #0f1730;
+      border: 1px solid #182245;
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #a5c3ff;
+      margin-bottom: 8px;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #9db2ff;
+      margin-bottom: 32px;
+      font-size: 16px;
+    }
+
+    .input-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      color: #c6d3ff;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      background: #0d1428;
+      border: 1px solid #182245;
+      border-radius: 8px;
+      padding: 12px;
+      color: #e6e7eb;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2a4fff;
+    }
+
+    input::placeholder {
+      color: #6b7ba8;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    select option {
+      background: #0d1428;
+      color: #e6e7eb;
+    }
+
+    .hint {
+      color: #8fa1d8;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    button {
+      background: #2a4fff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #3a5fff;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Player screen */
+    #player {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+
+    #player.active { display: block; }
+
+    /* Fullscreen webcam layout */
+    .player-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    #webcamFrame {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Music player hidden - audio only */
+    #musicFrame {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Controls overlay */
+    #controls {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      padding: 24px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    #player:hover #controls,
+    #player:focus-within #controls {
+      opacity: 1;
+    }
+
+    #controls button {
+      background: rgba(42, 79, 255, 0.9);
+      padding: 10px 20px;
+      width: auto;
+      font-size: 14px;
+    }
+
+    #controls button:hover {
+      background: rgba(58, 95, 255, 1);
+    }
+
+
+    /* True fullscreen mode - hide controls initially */
+    #player:-webkit-full-screen #controls,
+    #player:-moz-full-screen #controls,
+    #player:fullscreen #controls {
+      opacity: 0;
+    }
+
+    #player:-webkit-full-screen:hover #controls,
+    #player:-moz-full-screen:hover #controls,
+    #player:fullscreen:hover #controls {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Setup Screen -->
+  <div id="setup">
+    <div class="setup-container">
+      <h1>🎵 + 📹 Ambient TV</h1>
+      <p class="subtitle">Music + Webcam Vibes for Your Screen</p>
+
+      <div class="input-group">
+        <label for="musicSelect">Music</label>
+        <select id="musicSelect">
+          <option value="">Choose a vibe...</option>
+          <option value="lofi">Lo-Fi Hip Hop</option>
+          <option value="jazz">Jazz & Blues</option>
+          <option value="classical">Classical</option>
+          <option value="ambient">Ambient Electronic</option>
+          <option value="reggae">Reggae & Chill</option>
+          <option value="indie">Indie & Alternative</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="webcamSelect">Webcam</label>
+        <select id="webcamSelect">
+          <option value="">Choose a view...</option>
+          <option value="iss">🌍 Earth from Space (ISS)</option>
+          <option value="timessquare">🏙️ Times Square, NYC</option>
+          <option value="tokyo">🗼 Tokyo, Japan</option>
+          <option value="beach">🏖️ Beach Waves</option>
+          <option value="ocean">🌊 Ocean View</option>
+          <option value="forest">🌲 Forest Stream</option>
+          <option value="aquarium">🐠 Aquarium</option>
+          <option value="traffic">🚗 City Traffic</option>
+        </select>
+      </div>
+
+      <button id="startBtn" disabled>Start</button>
+
+      <div class="hint" style="margin-top: 24px; text-align: center;">
+        Pick a combo and click Start, or just hit Surprise Me!
+      </div>
+
+      <button id="randomBtn" style="margin-top: 16px; background: #1a223f;">Surprise Me</button>
+    </div>
+  </div>
+
+  <!-- Player Screen -->
+  <div id="player">
+    <div class="player-container">
+      <!-- Webcam fullscreen -->
+      <iframe id="webcamFrame" allow="autoplay; encrypted-media"></iframe>
+
+      <!-- Music playing in background (hidden) -->
+      <iframe id="musicFrame" allow="autoplay; encrypted-media"></iframe>
+    </div>
+
+    <!-- Controls -->
+    <div id="controls">
+      <button id="fullscreenBtn">Fullscreen</button>
+      <button id="changeWebcamBtn">Change View</button>
+      <button id="exitBtn">Exit</button>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    // Preset music streams
+    const MUSIC_PRESETS = {
+      lofi: 'jfKfPfyJRdk',      // Lofi Girl
+      jazz: '4xDzrJKXOOY',       // Jazz Cafe Radio
+      classical: 'jgpJVI3tDbY',  // Classical Music
+      ambient: 'MVPTGNGiI-4',    // Ambient Electronic
+      reggae: '36YnV9STBqc',     // Reggae Radio
+      indie: 'OW3shM7VxSs'       // Indie Folk
+    };
+
+    // Preset webcam streams
+    const WEBCAM_PRESETS = {
+      iss: '86YLFOog4GM',        // ISS Live
+      timessquare: 'AdUw5RdyZxI', // Times Square (check if live)
+      tokyo: 'dR9VBBQX-3g',      // Tokyo live
+      beach: 'dXIyMS61B68',      // Beach waves
+      ocean: 'H7pLMXeWPo4',      // Ocean waves
+      forest: 'eKFTSSKCzWA',     // Forest stream
+      aquarium: '7pf70Ebthr8',   // Monterey Bay Aquarium
+      traffic: 'wCcMcAXkpatrol' // Traffic cam
+    };
+
+    function extractYouTubeId(url) {
+      // Extract video ID from various YouTube URL formats
+      const patterns = [
+        /[?&]v=([^&]+)/,           // ?v=VIDEO_ID
+        /youtu\.be\/([^?]+)/,       // youtu.be/VIDEO_ID
+        /embed\/([^?]+)/,           // /embed/VIDEO_ID
+      ];
+
+      for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match) return match[1];
+      }
+      return null;
+    }
+
+    function createEmbedUrl(url, type) {
+      // Handle YouTube URLs
+      const videoId = extractYouTubeId(url);
+      if (videoId) {
+        if (type === 'music') {
+          return `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&loop=1&playlist=${videoId}`;
+        } else {
+          return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}`;
+        }
+      }
+
+      // If already an embed URL, use as-is
+      if (url.includes('/embed/')) {
+        return url;
+      }
+
+      // Otherwise, try to use the URL directly (might not work for all sites)
+      return url;
+    }
+
+    function startMixing(musicId, webcamId) {
+      // If called from dropdowns
+      if (!musicId) musicId = $('musicSelect').value;
+      if (!webcamId) webcamId = $('webcamSelect').value;
+
+      if (!musicId || !webcamId) {
+        alert('Please select both music and webcam');
+        return;
+      }
+
+      // Get YouTube IDs from presets
+      const musicVideoId = MUSIC_PRESETS[musicId] || musicId;
+      const webcamVideoId = WEBCAM_PRESETS[webcamId] || webcamId;
+
+      // Create embed URLs
+      const musicEmbed = `https://www.youtube.com/embed/${musicVideoId}?autoplay=1&controls=1&loop=1&playlist=${musicVideoId}`;
+      const webcamEmbed = `https://www.youtube.com/embed/${webcamVideoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${webcamVideoId}`;
+
+      // Set iframe sources
+      $('musicFrame').src = musicEmbed;
+      $('webcamFrame').src = webcamEmbed;
+
+      // Hide setup, show player
+      $('setup').classList.add('hidden');
+      $('player').classList.add('active');
+
+      // Save selections
+      localStorage.setItem('mixer_music', musicId);
+      localStorage.setItem('mixer_webcam', webcamId);
+    }
+
+    function randomMix() {
+      const musicKeys = Object.keys(MUSIC_PRESETS);
+      const webcamKeys = Object.keys(WEBCAM_PRESETS);
+
+      const randomMusic = musicKeys[Math.floor(Math.random() * musicKeys.length)];
+      const randomWebcam = webcamKeys[Math.floor(Math.random() * webcamKeys.length)];
+
+      startMixing(randomMusic, randomWebcam);
+    }
+
+    function exitPlayer() {
+      $('player').classList.remove('active');
+      $('setup').classList.remove('hidden');
+      $('musicFrame').src = '';
+      $('webcamFrame').src = '';
+    }
+
+    function toggleFullscreen() {
+      const player = $('player');
+
+      if (!document.fullscreenElement) {
+        player.requestFullscreen().catch(err => {
+          alert(`Error entering fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function changeWebcam() {
+      // Cycle to next webcam
+      const webcamKeys = Object.keys(WEBCAM_PRESETS);
+      const currentWebcam = localStorage.getItem('mixer_webcam');
+      const currentIndex = webcamKeys.indexOf(currentWebcam);
+      const nextIndex = (currentIndex + 1) % webcamKeys.length;
+      const nextWebcam = webcamKeys[nextIndex];
+
+      // Update webcam
+      const webcamVideoId = WEBCAM_PRESETS[nextWebcam];
+      const webcamEmbed = `https://www.youtube.com/embed/${webcamVideoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${webcamVideoId}`;
+      $('webcamFrame').src = webcamEmbed;
+
+      // Save new selection
+      localStorage.setItem('mixer_webcam', nextWebcam);
+    }
+
+    // Event listeners
+    $('startBtn').addEventListener('click', () => startMixing());
+    $('randomBtn').addEventListener('click', randomMix);
+    $('exitBtn').addEventListener('click', exitPlayer);
+    $('fullscreenBtn').addEventListener('click', toggleFullscreen);
+    $('changeWebcamBtn').addEventListener('click', changeWebcam);
+
+    // Enable Start button when both selections are made
+    function checkSelections() {
+      const musicSelected = $('musicSelect').value;
+      const webcamSelected = $('webcamSelect').value;
+      $('startBtn').disabled = !(musicSelected && webcamSelected);
+    }
+
+    $('musicSelect').addEventListener('change', checkSelections);
+    $('webcamSelect').addEventListener('change', checkSelections);
+
+    // Restore previous selections from localStorage
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedMusic = localStorage.getItem('mixer_music');
+      const savedWebcam = localStorage.getItem('mixer_webcam');
+
+      if (savedMusic) $('musicSelect').value = savedMusic;
+      if (savedWebcam) $('webcamSelect').value = savedWebcam;
+
+      checkSelections();
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (!$('player').classList.contains('active')) return;
+
+      switch(e.key) {
+        case 'Escape':
+          exitPlayer();
+          break;
+        case 'f':
+        case 'F':
+          toggleFullscreen();
+          break;
+        case 's':
+        case 'S':
+          swapSides();
+          break;
+      }
+    });
+  </script>
+</body>
+</html>

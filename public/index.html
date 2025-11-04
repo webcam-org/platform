@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public Webcams Directory | webcam.org</title>
+  <meta name="description" content="Browse live public webcams from around the world. Traffic cams, weather cams, beach views, and more. Community-powered webcam directory.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+    header { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 20px; color: #1a73e8; }
+    header nav a { margin-left: 20px; color: #666; text-decoration: none; }
+    header nav a:hover { color: #1a73e8; }
+
+    #map { height: calc(100vh - 60px); width: 100%; }
+
+    .leaflet-popup-content { min-width: 200px; }
+    .cam-popup h3 { margin: 0 0 8px 0; color: #1a73e8; font-size: 16px; }
+    .cam-popup p { margin: 4px 0; font-size: 14px; color: #666; }
+    .cam-popup .btn { display: inline-block; margin-top: 8px; padding: 8px 16px; background: #1a73e8; color: #fff; text-decoration: none; border-radius: 4px; font-size: 14px; }
+    .cam-popup .btn:hover { background: #1557b0; }
+
+    .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: #fff; padding: 20px 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>webcam.org - Public Webcams</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/test">Test Webcam</a>
+      <a href="#" id="listView">List View</a>
+    </nav>
+  </header>
+
+  <div id="loading" class="loading">Loading webcams...</div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script>
+    // Initialize map
+    const map = L.map('map').setView([37.0, -120.0], 6); // Center on California
+
+    // Add tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 18
+    }).addTo(map);
+
+    // Marker cluster group
+    const markers = L.markerClusterGroup();
+
+    // Fetch webcams from API
+    fetch('/api/webcams/public.php')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('loading').style.display = 'none';
+
+        if (!data.webcams || data.webcams.length === 0) {
+          alert('No webcams found');
+          return;
+        }
+
+        console.log(`Loaded ${data.webcams.length} webcams`);
+
+        data.webcams.forEach(cam => {
+          const marker = L.marker([cam.lat, cam.lon]);
+
+          const popupContent = `
+            <div class="cam-popup">
+              <h3>${cam.name}</h3>
+              <p>📍 ${cam.city}, ${cam.state || cam.country}</p>
+              <p>🎥 ${cam.camera_type || 'webcam'}</p>
+              <a href="/public/${cam.id}" class="btn">Watch Live</a>
+            </div>
+          `;
+
+          marker.bindPopup(popupContent);
+          markers.addLayer(marker);
+        });
+
+        map.addLayer(markers);
+        map.fitBounds(markers.getBounds());
+      })
+      .catch(error => {
+        document.getElementById('loading').innerHTML = 'Error loading webcams';
+        console.error('Error:', error);
+      });
+
+    // List view toggle
+    document.getElementById('listView').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = '/public/list';
+    });
+  </script>
+</body>
+</html>

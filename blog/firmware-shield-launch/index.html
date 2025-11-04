@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducing The Firmware Shield: Know If Your Camera Is Vulnerable - webcam.org</title>
+    <meta name="description" content="Free camera vulnerability checker launched. Scan your IP camera or doorbell for known CVEs and security exploits in seconds. Protect your privacy.">
+    <meta name="keywords" content="camera vulnerability scanner, firmware shield, CVE checker, IP camera security, security camera exploits">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="canonical" href="https://webcam.org/blog/firmware-shield-launch/">
+
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;line-height:1.6;color:#333;background:#f5f5f5}
+        .container{max-width:1200px;margin:0 auto;padding:1rem}
+        .cta-box{background:linear-gradient(135deg,#c0392b 0%,#8e44ad 100%);color:#fff;padding:2rem;border-radius:12px;margin:2rem 0;text-align:center}
+        .cta-box h3{font-size:1.75rem;margin-bottom:1rem}
+        .cta-box .btn{display:inline-block;padding:1rem 2rem;background:#fff;color:#c0392b;font-weight:600;text-decoration:none;border-radius:8px;margin-top:1rem}
+        .cta-box .btn:hover{background:#f0f0f0}
+        .highlight-box{background:#fff3cd;border-left:4px solid:#ff9800;padding:1.5rem;margin:2rem 0;border-radius:4px}
+    </style>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <main class="container">
+        <article class="panel">
+            <a href="/blog/" class="back-link">← Back to Blog</a>
+
+            <div class="article-header">
+                <h1>Introducing The Firmware Shield: Know If Your Camera Is Vulnerable</h1>
+                <p class="article-meta">Published: October 29, 2025 • 6 min read</p>
+            </div>
+
+            <div class="article-content">
+                <p><strong>In March 2024, over 11,000 Wyze cameras were accidentally exposed to strangers due to a server upgrade gone wrong.</strong> Users logged in to see live feeds from other people's homes. While Wyze called it a "temporary service outage," it exposed a fundamental truth: your camera's security is only as strong as its weakest link.</p>
+
+                <p>That weak link? <strong>Firmware vulnerabilities.</strong></p>
+
+                <p>Today, we're launching <strong>The Firmware Shield</strong> — a free vulnerability scanner that tells you, in seconds, whether your camera has known security exploits that could compromise your privacy.</p>
+
+                <div class="cta-box">
+                    <h3>🛡️ Check Your Camera Now</h3>
+                    <p>Free vulnerability scan. No account required. Get results in 10 seconds.</p>
+                    <a href="/firmware-shield/" class="btn">Run Free Security Audit →</a>
+                </div>
+
+                <h2>Why We Built The Firmware Shield</h2>
+                <p>After publishing our investigation into <a href="/blog/ring-nest-privacy-dangers/">Ring and Nest's privacy dangers</a>, we received hundreds of messages from people asking the same question:</p>
+
+                <blockquote style="font-style:italic; padding:1rem; border-left:4px solid #1a73e8; margin:2rem 0; background:#f0f8ff;">
+                    "I already own a [Brand X] camera. How do I know if <em>my</em> camera is vulnerable?"
+                </blockquote>
+
+                <p>The problem is that most people have no idea if their $200 doorbell has a critical security flaw that allows strangers to access their video feed. Manufacturers rarely publicize vulnerabilities, and when they do, the information is buried in technical CVE databases that require security expertise to navigate.</p>
+
+                <p><strong>The Firmware Shield solves this problem.</strong> Enter your camera model, and we'll tell you:</p>
+                <ul>
+                    <li>If your camera has known, exploitable vulnerabilities</li>
+                    <li>How severe the risk is (low, medium, high, critical)</li>
+                    <li>What the vulnerability allows attackers to do</li>
+                    <li>How to fix it (or if it's unfixable)</li>
+                </ul>
+
+                <h2>How It Works</h2>
+                <p>The Firmware Shield scans our continuously updated database of Common Vulnerabilities and Exposures (CVEs) from:</p>
+                <ul>
+                    <li>NIST National Vulnerability Database</li>
+                    <li>MITRE CVE List</li>
+                    <li>Manufacturer security bulletins</li>
+                    <li>Security researcher disclosures</li>
+                    <li>Zero-day exploit reports</li>
+                </ul>
+
+                <p><strong>Free tier:</strong> Scans the top 2 most critical vulnerabilities for your camera model.<br>
+                <strong>Pro tier ($5/mo):</strong> Scans <em>all</em> known vulnerabilities (low to critical severity) and provides weekly automated monitoring with email alerts when new exploits are discovered.</p>
+
+                <div class="highlight-box">
+                    <p><strong>Important:</strong> The Firmware Shield is <strong>100% non-intrusive</strong>. We never connect to your camera or network. All checks are performed against public vulnerability databases. Your device is never touched.</p>
+                </div>
+
+                <h2>Real Examples of What We've Found</h2>
+                <p>Here are actual vulnerabilities discovered in popular consumer cameras:</p>
+
+                <h3>D-Link DCS Series</h3>
+                <p><strong>CVE-2020-25078</strong> - Authentication bypass allowing remote attackers to access live video feeds and recorded footage without credentials. Affected over 120 camera models. <strong>No patch available.</strong></p>
+
+                <h3>Wyze Cam v2 & v3</h3>
+                <p><strong>CVE-2019-9564</strong> - Insecure communications protocol allows man-in-the-middle attacks to intercept video streams. Severity: HIGH. Fix: Update to firmware 4.9.8.1002 or newer.</p>
+
+                <h3>Nest Cam Indoor</h3>
+                <p><strong>Multiple Bluetooth vulnerabilities</strong> - Pairing process can be intercepted, allowing unauthorized device control. Severity: MEDIUM. Google issued patch in 2021 but millions of devices remain unpatched.</p>
+
+                <h3>Generic ONVIF/RTSP Cameras</h3>
+                <p><strong>CVE-2021-36260</strong> - Hikvision SDK vulnerability affecting thousands of rebranded cameras. Allows remote code execution with root privileges. Severity: CRITICAL (9.8/10). Patch available but requires manual firmware update.</p>
+
+                <h2>The Real Cost of Ignoring Firmware Security</h2>
+                <p>Vulnerable cameras aren't just a privacy concern — they're a legal and financial liability:</p>
+                <ul>
+                    <li><strong>Privacy violations:</strong> Strangers accessing your home footage can lead to stalking, burglary, or blackmail</li>
+                    <li><strong>Botnet recruitment:</strong> Compromised cameras are added to DDoS botnets (see: 2016 Mirai botnet attack)</li>
+                    <li><strong>Data breaches:</strong> Cameras on your network can be used as entry points to steal other data</li>
+                    <li><strong>Legal liability:</strong> If your compromised camera is used in a crime, you may face legal consequences</li>
+                </ul>
+
+                <p>In 2023, Ring was fined $5.8 million by the FTC for security failures that allowed employees to spy on customers. But <em>you</em> won't get a settlement check if <em>your</em> camera is hacked due to an unpatched vulnerability.</p>
+
+                <h2>Who Should Use The Firmware Shield?</h2>
+
+                <p><strong>Homeowners & Renters:</strong> If you have any IP camera, video doorbell, or baby monitor, you should scan it. Even "trusted" brands like Ring, Nest, Arlo, and Wyze have had critical vulnerabilities.</p>
+
+                <p><strong>Small Businesses:</strong> Retail stores, offices, and restaurants with security cameras are prime targets. A single vulnerable camera can expose your entire network.</p>
+
+                <p><strong>IT Professionals:</strong> Managing camera deployments for clients? Use the Enterprise tier ($29/mo) to bulk-scan inventories and generate compliance reports.</p>
+
+                <p><strong>Privacy Advocates:</strong> If you've already switched to Webcam.org or another open-source solution, use The Firmware Shield to validate that your migration was necessary (spoiler: it was).</p>
+
+                <h2>Beyond Scanning: What Happens After You Find a Vulnerability?</h2>
+                <p>Finding a vulnerability is only step one. The Firmware Shield provides actionable next steps:</p>
+
+                <ol>
+                    <li><strong>Patch availability:</strong> Direct links to manufacturer firmware updates</li>
+                    <li><strong>Mitigation strategies:</strong> If no patch exists, we provide workarounds (network isolation, access controls, etc.)</li>
+                    <li><strong>Migration path:</strong> For unfixable vulnerabilities, we recommend secure, open-source alternatives compatible with Webcam.org</li>
+                    <li><strong>Monitoring:</strong> Pro subscribers get weekly scans and alerts if new vulnerabilities are discovered</li>
+                </ol>
+
+                <h2>The Open-Source Alternative</h2>
+                <p>The uncomfortable truth is that many consumer cameras <strong>cannot be fixed</strong> when vulnerabilities are discovered. Manufacturers abandon older models, leaving you with three options:</p>
+                <ol>
+                    <li>Live with the risk</li>
+                    <li>Buy a new camera (and hope it's more secure)</li>
+                    <li>Switch to an open-source, auditable system like Webcam.org</li>
+                </ol>
+
+                <p>Webcam.org supports <strong>ONVIF and RTSP standard cameras</strong> with local-first storage and end-to-end encryption. When a vulnerability is discovered in our open-source stack, the global community patches it within days — not months or years.</p>
+
+                <p>Pro subscribers ($5/mo) get both The Firmware Shield monitoring <em>and</em> encrypted remote access via our Basic Relay service. It's 24/7 threat intelligence plus the privacy-first camera platform you deserve.</p>
+
+                <div class="cta-box">
+                    <h3>🔐 Start Your Free Scan</h3>
+                    <p>Enter your camera model and see your vulnerabilities in 10 seconds.</p>
+                    <a href="/firmware-shield/" class="btn">Check My Camera →</a>
+                </div>
+
+                <h2>Pricing & Plans</h2>
+                <p><strong>Free Audit:</strong> $0 — Single on-demand scan of top 2 critical CVEs. No account required.</p>
+
+                <p><strong>Pro Audit:</strong> $5/month (bundled with Basic Relay) — Full CVE database scan, weekly monitoring, email alerts, save up to 5 devices, encrypted camera access.</p>
+
+                <p><strong>Enterprise:</strong> $29/month — Unlimited devices, bulk upload, white-labeled PDF reports, priority support.</p>
+
+                <p><a href="/firmware-shield/">Start your free scan now →</a> or <a href="/pricing">view all pricing options</a>.</p>
+
+                <h2>Frequently Asked Questions</h2>
+
+                <p><strong>Q: Does the scan connect to my camera?</strong><br>
+                A: No. The Firmware Shield is 100% non-intrusive. We only check your camera model against public CVE databases. We never access your device or network.</p>
+
+                <p><strong>Q: What if my camera isn't in your database?</strong><br>
+                A: We're continuously adding new models. If yours isn't found, <a href="/contact">contact us</a> and we'll prioritize adding it.</p>
+
+                <p><strong>Q: Can I scan cameras I don't own yet?</strong><br>
+                A: Yes! Use The Firmware Shield before buying a camera to avoid purchasing a vulnerable model.</p>
+
+                <p><strong>Q: What happens if you find a vulnerability with no patch?</strong><br>
+                A: We provide mitigation strategies and recommend secure alternatives. For unfixable critical vulnerabilities, we offer a migration path to Webcam.org-compatible cameras.</p>
+
+                <p><strong>Q: Is my scan history private?</strong><br>
+                A: Free scans are anonymous and not stored. Pro subscribers' saved device lists are encrypted and never shared.</p>
+
+                <h2>Take Back Control</h2>
+                <p>You bought a security camera to feel <em>more</em> secure, not to invite strangers into your home. The Firmware Shield gives you the knowledge you need to make informed decisions about your privacy.</p>
+
+                <p>Don't wait until your camera ends up in the next headline about a massive data breach.</p>
+
+                <div style="margin:3rem 0; padding:2rem; background:#f0f8ff; border-radius:8px; text-align:center;">
+                    <h3 style="color:#1a73e8; margin-bottom:1rem;">🛡️ Run Your Free Security Audit Now</h3>
+                    <p>10-second scan. No account required. Know your risk.</p>
+                    <a href="/firmware-shield/" class="btn btn-primary" style="margin-top:1rem;">Check My Camera →</a>
+                </div>
+
+                <hr style="margin:3rem 0; border:none; border-top:1px solid #e0e0e0;">
+
+                <p style="font-style:italic; color:#666;">The Firmware Shield is part of Webcam.org's mission to make home security truly secure. Read about our <a href="/blog/ring-nest-privacy-dangers/">investigation into Ring and Nest</a>, explore <a href="/cameras">compatible cameras</a>, or <a href="/docs">set up your own privacy-first system</a>.</p>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <p>&copy; 2025 Webcam.org • <a href="/privacy.html">Privacy</a> • <a href="/test/">Test Webcam</a> • <a href="/blog/">Blog</a></p>
+        </div>
+    </footer>
+</body>
+</html>

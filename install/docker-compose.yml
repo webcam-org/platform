@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+  # MQTT Broker for Frigate events
+  mqtt:
+    container_name: mqtt
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./config/mosquitto:/mosquitto/config
+      - ./data/mosquitto:/mosquitto/data
+    command: mosquitto -c /mosquitto-no-auth.conf
+
+  # Frigate NVR with AI
+  frigate:
+    container_name: frigate
+    image: ghcr.io/blakeblackshear/frigate:stable
+    restart: unless-stopped
+    shm_size: "256mb"
+    volumes:
+      - ./config:/config
+      - ./media:/media/frigate
+    ports:
+      - "5001:5000"
+    environment:
+      FRIGATE_RTSP_PASSWORD: "password"
+    depends_on:
+      - mqtt
+
+  # webcam.org Integration Service
+  webcamorg:
+    container_name: webcamorg-integration
+    image: python:3.11-slim
+    restart: unless-stopped
+    volumes:
+      - ./integration:/app
+    working_dir: /app
+    command: bash -c "pip install paho-mqtt requests && python integration.py"
+    environment:
+      - MQTT_HOST=mqtt
+      - MQTT_PORT=1883
+      - WEBCAMORG_API_URL=https://api.webcam.org
+    depends_on:
+      - mqtt
+      - frigate

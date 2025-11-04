@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الموقع - تحقق من الكاميرا على الانترنت</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+    <meta name="description" content="اختبروا موقعكم على الإنترنت: ما قبل الاستعراض، القرار، جهاز تحديد المواقع، المستوى الميكولوجي، والتشخيصات. خاصّ ويَرْكضُ في منظفِكَ.">
+    <link rel="canonical" href="https://webcam.org/test/ar/">
+    <link rel="alternate" hreflang="ar" href="https://webcam.org/test/">
+    <link rel="alternate" hreflang="es" href="https://webcam.org/test/es/">
+    <link rel="alternate" hreflang="fr" href="https://webcam.org/test/fr/">
+    <link rel="alternate" hreflang="de" href="https://webcam.org/test/de/">
+    <link rel="alternate" hreflang="pt" href="https://webcam.org/test/pt/">
+    <link rel="alternate" hreflang="it" href="https://webcam.org/test/it/">
+    <link rel="alternate" hreflang="ja" href="https://webcam.org/test/ja/">
+    <link rel="alternate" hreflang="zh-Hans" href="https://webcam.org/test/zh/">
+    <link rel="alternate" hreflang="ru" href="https://webcam.org/test/ru/">
+    <link rel="alternate" hreflang="ko" href="https://webcam.org/test/ko/">
+    <link rel="alternate" hreflang="ar" href="https://webcam.org/test/ar/">
+    <link rel="alternate" hreflang="x-default" href="https://webcam.org/test/">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L2B029CR5R"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-L2B029CR5R');
+    </script>
+
+    <style>
+        /* Critical CSS - inline for performance */
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;line-height:1.6;color:#333;background:#f5f5f5}
+        .container{max-width:1200px;margin:0 auto;padding:1rem}
+        .hero{text-align:center;padding:2rem 1rem;background:#fff;border-radius:8px;margin-bottom:1rem}
+        .hero h1{font-size:2rem;margin-bottom:0.5rem;color:#1a73e8}
+        .btn{display:inline-block;padding:0.75rem 1.5rem;margin:0.5rem;background:#1a73e8;color:#fff;border:none;border-radius:4px;font-size:1rem;cursor:pointer;transition:background 0.2s}
+        .btn:hover{background:#1557b0}
+        .btn:focus{outline:2px solid #1a73e8;outline-offset:2px}
+        #video{width:100%;max-width:100%;height:auto;background:#000;border-radius:4px}
+    </style>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/lang-redirect.js"></script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How to allow camera permissions?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Click the camera icon in your browser's address bar and select 'Allow'. On mobile, go to Settings > Safari/Chrome > Camera and allow webcam.org."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is my webcam blurry?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Clean your camera lens, ensure good lighting, and check if your camera supports 1080p. Consider upgrading to a higher-quality webcam for better clarity."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How to switch cameras?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use the camera dropdown selector to choose between available cameras. Click 'Refresh devices' if your camera doesn't appear in the list."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How to test my microphone?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Click 'Start mic test' and speak. You'll see a real-time audio level meter showing your microphone input. Grant microphone permissions when prompted."
+          }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+
+    <main class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <h1>
+                <img src="/img/check.svg" alt="" width="32" height="32" aria-hidden="true" class="inline-icon">
+                اختبر كاميرا الويب الخاصة بك على الفور
+            </h1>
+            <p class="subtitle">لا تحميل كُلّ شيء يَرْكضُ في جبينِكَ.</p>
+            <div class="button-group">
+                <button id="startCamBtn" class="btn btn-primary" aria-label="ابدأ التصوير">
+                    <img src="/img/camera.svg" alt="" width="20" height="20" aria-hidden="true">
+                    Start camera test
+                </button>
+                <button id="startMicBtn" class="btn btn-secondary" aria-label="Start microphone test">
+                    <img src="/img/mic.svg" alt="" width="20" height="20" aria-hidden="true">
+                    Start mic test
+                </button>
+            </div>
+        </section>
+
+        <!-- HTTPS Warning -->
+        <div id="httpsWarning" class="alert alert-error" style="display:none" role="alert">
+            <img src="/img/warn.svg" alt="Warning" width="20" height="20" aria-hidden="true">
+            <strong>HTTPS المطلوب:</strong> Camera access requires a secure connection. Please access this page via HTTPS.
+        </div>
+
+        <!-- Privacy Notice -->
+        <div class="privacy-notice" role="note">
+            <strong>🔒 Private Testing:</strong> All tests run locally in your browser. No video or audio is uploaded.
+        </div>
+
+        <!-- Device Selection -->
+        <section class="device-select-panel panel">
+            <h2>اختيار الجهاز</h2>
+            <div class="device-row">
+                <div class="device-group">
+                    <label for="cameraSelect">الكاميرا:</label>
+                    <select id="cameraSelect" aria-label="Select camera device">
+                        <option value="">كاميرا اختر...</option>
+                    </select>
+                </div>
+                <div class="device-group">
+                    <label for="micSelect">مايكروفون:</label>
+                    <select id="micSelect" aria-label="Select microphone device">
+                        <option value="">اختر الميكروفون.</option>
+                    </select>
+                </div>
+                <button id="refreshDevices" class="btn btn-small" aria-label="Refresh device list">
+                    🔄 Refresh
+                </button>
+            </div>
+        </section>
+
+        <!-- Video Panel -->
+        <section class="video-panel panel">
+            <h2>Camera Preview</h2>
+            <div class="video-container">
+                <video id="video" autoplay playsinline muted aria-label="Camera preview"></video>
+                <div id="videoPlaceholder" class="video-placeholder">
+                    <img src="/img/camera.svg" alt="" width="64" height="64" aria-hidden="true">
+                    <p>"إختبار الكاميرا ستارت"</p>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="stopCamBtn" class="btn btn-small" disabled>أوقف الكاميرا</button>
+                <button id="flipBtn" class="btn btn-small" disabled>Flip Horizontally</button>
+                <button id="snapshotBtn" class="btn btn-small" disabled>خذ (سنابشوت)</button>
+            </div>
+            <div class="stats">
+                <h3>كاميرا</h3>
+                <ul>
+                    <li><strong>القرار:</strong> <span id="res">—</span></li>
+                    <li><strong>FPS:</strong> <span id="fps">—</span></li>
+                    <li><strong>درجة الحرارة:</strong> <span id="latency">—</span> ms</li>
+                    <li><strong>ديفس:</strong> <span id="camName">—</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Microphone Panel -->
+        <section class="mic-panel panel">
+            <h2>Microphone الاختبار</h2>
+            <div class="mic-meter-container">
+                <canvas id="micMeter" width="800" height="40" aria-label="Microphone level meter"></canvas>
+                <div class="mic-level">
+                    <span>المستوى:</span>
+                    <span id="micRMS" aria-live="polite">— dBFS</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="stopMicBtn" class="btn btn-small" disabled>أوقف الميكروفون</button>
+            </div>
+        </section>
+
+        <!-- Diagnostics -->
+        <section class="diagnostics-panel panel">
+            <h2>التشخيص</h2>
+            <div class="diagnostics-grid">
+                <div class="diag-item">
+                    <strong>الإذن:</strong>
+                    <div>
+                        Camera: <span id="permCam" class="status">—</span> •
+                        Mic: <span id="permMic" class="status">—</span>
+                    </div>
+                </div>
+                <div class="diag-item">
+                    <strong>Browser:</strong> <span id="ua">—</span>
+                </div>
+                <div class="diag-item">
+                    <strong>HTTPS:</strong> <span id="https" class="status">—</span>
+                </div>
+                <div class="diag-item">
+                    <strong>القيود:</strong> <span id="constraints">—</span>
+                </div>
+                <div class="diag-item">
+                    <strong>الإطارات المسقطة:</strong> <span id="dropped">0</span> (approx)
+                </div>
+            </div>
+            <div class="controls">
+                            <button id="copyDiagBtn" class="btn btn-small">📋 Copy Diagnostics</button>
+
+                <button id="copyShareBtn" class="btn btn-small" onclick="WebcamTest.copyShareLink()">🔗 Copy Share Link</button>
+            </div>
+        </section>
+
+        <!-- Result Banner -->
+        <div id="result" class="result-banner" role="status" aria-live="polite" style="display:none">
+            Your webcam is working
+        </div>
+
+        <!-- Tips Section -->
+        <section class="tips-panel panel" id="troubleshoot">
+            <h2>Tps & Troubleshooting</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h3>
+                        <img src="/img/warn.svg" alt="" width="24" height="24" aria-hidden="true">
+                        Blurry or Dark Video?
+                    </h3>
+                    <ul>
+                        <li>نظف عدساتك</li>
+                        <li>تحسين الإضاءة (نظرة ضوء حلقة)</li>
+                        <li>محاولة اختيار 1080p في كاميرا</li>
+                        <li>التركيز على الكاميرا (إذا أمكن تعديلها)</li>
+                    </ul>
+                </div>
+                <div class="tip-card">
+                    <h3>
+                        <img src="/img/warn.svg" alt="" width="24" height="24" aria-hidden="true">
+                        Camera Not Working?
+                    </h3>
+                    <ul>
+                        <li>إغلاق تطبيقات أخرى باستخدام الكاميرا (زوم، فرق، سكايب)</li>
+                        <li>إذن كاميرا منح في جهازك</li>
+                        <li>جرّب مهرّب مختلف</li>
+                        <li>اعيدي تشغيل جهازك</li>
+                        <li>التحقق من خصوصية الأجهزة</li>
+                    </ul>
+                </div>
+                <div class="tip-card">
+                    <h3>
+                        <img src="/img/check.svg" alt="" width="24" height="24" aria-hidden="true">
+                        Upgrade Your Setup
+                    </h3>
+                    <ul>
+                        <li>فقط 720ب؟ النظر في رفع مستوى الكشك على شبكة الإنترنت</li>
+                        <li>Recommended: Logitech C922 (1080p, 30fps)</li>
+                        <li>Premium: Logitech Brio (4K, HDR)</li>
+                        <li>أضف ضوء خاتم من أجل النظرة المهنية</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Privacy Section -->
+        <section class="privacy-panel panel" id="privacy">
+            <h2>خصوصيتك</h2>
+            <div class="privacy-content">
+                <p><strong>وسائل الإعلام الخاصة بك تبقى على جهازك.</strong> All camera and microphone testing runs locally in your browser using standard web APIs.</p>
+                <p>لا فيديو أو سمعة أو صور محملة على خوادمنا صفحة الإختبار تعمل خارج الخط بمجرد تحميلها.</p>
+                <p>نستخدم تحليلات جوجل لفهم كيفية استخدام الزوار لهذه الأداة وتحسين التجربة. ولا يتم جمع أي بيانات كاميرا أوديو يمكن تحديدها شخصيا.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <p>&copy; 2025 Webcam.org • <a href="#privacy">الخصوصية</a> • <a href="#troubleshoot">الاضطرابات</a> • <a href="/blog">Blog</a></p>
+        </div>
+            <p class="lang-footer">
+                <a href="/test/" onclick="localStorage.setItem('wt_lang_selected', '1');">English</a> •
+                <a href="/test/es/" onclick="localStorage.setItem('wt_lang_selected', '1');">Español</a> •
+                <a href="/test/fr/" onclick="localStorage.setItem('wt_lang_selected', '1');">Français</a> •
+                <a href="/test/de/" onclick="localStorage.setItem('wt_lang_selected', '1');">Deutsch</a> •
+                <a href="/test/pt/" onclick="localStorage.setItem('wt_lang_selected', '1');">Português</a> •
+                <a href="/test/it/" onclick="localStorage.setItem('wt_lang_selected', '1');">Italiano</a> •
+                <a href="/test/ja/" onclick="localStorage.setItem('wt_lang_selected', '1');">日本語</a> •
+                <a href="/test/zh/" onclick="localStorage.setItem('wt_lang_selected', '1');">简体中文</a> •
+                <a href="/test/ru/" onclick="localStorage.setItem('wt_lang_selected', '1');">Русский</a> •
+                <a href="/test/ko/" onclick="localStorage.setItem('wt_lang_selected', '1');">한국어</a> •
+                <a href="/test/ar/" class="lang-active" onclick="localStorage.setItem('wt_lang_selected', '1');">العربية</a>
+            </p>
+    </footer>
+
+    <!-- Snapshot Canvas (hidden) -->
+    <canvas id="snapshotCanvas" style="display:none"></canvas>
+
+    <script src="/js/webcam-test.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Firmware Shield - Free Camera Vulnerability Checker | webcam.org</title>
+    <meta name="description" content="Check if your security camera has known vulnerabilities. Free CVE scanner for IP cameras, doorbells, and smart home devices. Protect your privacy.">
+    <meta name="keywords" content="camera vulnerability scanner, CVE checker, IP camera security, firmware vulnerabilities, security audit">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="canonical" href="https://webcam.org/firmware-shield/">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* Header */
+        header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a73e8;
+            text-decoration: none;
+        }
+
+        nav a {
+            margin-left: 1.5rem;
+            color: #5f6368;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav a:hover { color: #1a73e8; }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #c0392b 0%, #8e44ad 100%);
+            color: #fff;
+            padding: 4rem 1.5rem 3rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .shield-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Scanner Form */
+        .scanner-section {
+            background: #fff;
+            padding: 3rem 1.5rem;
+            margin-top: -2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        .disclaimer {
+            font-size: 0.875rem;
+            color: #5f6368;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #c0392b;
+            color: #fff;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #a93226;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
+        }
+
+        .btn-secondary {
+            background: #1a73e8;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #1557b0;
+        }
+
+        /* Results */
+        #results {
+            display: none;
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .status-banner {
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .status-vulnerable {
+            background: #ffebee;
+            border: 3px solid #c62828;
+            color: #c62828;
+        }
+
+        .status-risk {
+            background: #fff3e0;
+            border: 3px solid #f57c00;
+            color: #f57c00;
+        }
+
+        .status-secure {
+            background: #e8f5e9;
+            border: 3px solid #2e7d32;
+            color: #2e7d32;
+        }
+
+        .result-details {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .result-details h3 {
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .vulnerability-item {
+            padding: 1rem;
+            background: #fff;
+            border-left: 4px solid #c62828;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .vulnerability-item strong {
+            color: #c62828;
+        }
+
+        /* Upgrade Block */
+        .upgrade-block {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .upgrade-block h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .upgrade-features {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .upgrade-features li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .upgrade-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 1.5rem;
+            background: #fff;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.125rem;
+            color: #5f6368;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: #1a1a1a;
+        }
+
+        .feature-card p {
+            color: #5f6368;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 4rem 1.5rem;
+            background: #fafafa;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pricing-card {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .pricing-card.featured {
+            border-color: #1a73e8;
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(26, 115, 232, 0.15);
+        }
+
+        .pricing-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: #1a73e8;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .features-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+
+        footer a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 1rem;
+            opacity: 0.8;
+        }
+
+        footer a:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .section-title { font-size: 1.75rem; }
+            nav { display: none; }
+            .pricing-card.featured { transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">Webcam.org</a>
+                <nav>
+                    <a href="/firmware-shield/">Firmware Shield</a>
+                    <a href="/blog/">Blog</a>
+                    <a href="/docs">Docs</a>
+                    <a href="/test/">Test Camera</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <span class="shield-icon">🛡️</span>
+            <h1>Verify Your Camera's Integrity</h1>
+            <p class="subtitle">Check the Firmware Shield Status</p>
+        </div>
+    </section>
+
+    <section class="container">
+        <div class="scanner-section">
+            <form id="scannerForm" onsubmit="runScan(event)">
+                <div class="form-group">
+                    <label for="cameraModel">Enter Camera Model or CVE Code</label>
+                    <div class="input-wrapper">
+                        <input
+                            type="text"
+                            id="cameraModel"
+                            name="cameraModel"
+                            placeholder="e.g., D-Link DCS-8300LHV2 or CVE-2023-12345"
+                            required
+                        />
+                    </div>
+                </div>
+                <p class="disclaimer">Non-intrusive check against a continuously updated database of known threats. No connection made to your device.</p>
+                <button type="submit" class="btn btn-primary">🔍 Run FREE Security Audit</button>
+            </form>
+        </div>
+
+        <div id="results"></div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Why The Firmware Shield?</h2>
+            <p class="section-subtitle">Protect your privacy with real-time vulnerability intelligence</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Instant CVE Database Scan</h3>
+                    <p>Check against thousands of known vulnerabilities in seconds. Free tier scans top 2 critical CVEs.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🚨</div>
+                    <h3>Zero-Day Alerts</h3>
+                    <p>Pro subscribers get real-time email alerts when new exploits are discovered for their cameras.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Actionable Reports</h3>
+                    <p>Get clear mitigation steps, patch links, and recommendations for secure alternatives.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Privacy-First Design</h3>
+                    <p>We never connect to your camera. All checks are against public vulnerability databases.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Multi-Device Monitoring</h3>
+                    <p>Pro tier allows you to save and monitor multiple camera models with automated weekly scans.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🏢</div>
+                    <h3>Enterprise Reports</h3>
+                    <p>White-labeled PDF reports for compliance and IT documentation at Enterprise tier.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing">
+        <div class="container">
+            <h2 class="section-title">Choose Your Protection Level</h2>
+            <p class="section-subtitle">From free basic scans to enterprise-grade threat intelligence</p>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Free Audit</h3>
+                    <div class="price">$0</div>
+                    <ul class="features-list">
+                        <li>✓ Single on-demand scan</li>
+                        <li>✓ Top 2 Critical CVEs check</li>
+                        <li>✓ Basic Pass/Fail/Risk assessment</li>
+                        <li>✓ No account required</li>
+                    </ul>
+                    <a href="#scanner" class="btn btn-secondary">Start Free Scan</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <h3>Pro Audit</h3>
+                    <div class="price">$5<span style="font-size:1rem">/mo</span></div>
+                    <p style="margin-bottom:1rem; color:#1a73e8; font-weight:600;">Bundled with Basic Relay</p>
+                    <ul class="features-list">
+                        <li>✓ Full CVE database scan (all severities)</li>
+                        <li>✓ Weekly automated monitoring</li>
+                        <li>✓ Email alerts for new exploits</li>
+                        <li>✓ Save up to 5 devices</li>
+                        <li>✓ Direct patch/mitigation links</li>
+                        <li>✓ Encrypted remote camera access</li>
+                    </ul>
+                    <a href="/pricing" class="btn btn-primary">Start 14-Day Trial</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <div class="price">$29<span style="font-size:1rem">/mo</span></div>
+                    <ul class="features-list">
+                        <li>✓ Unlimited devices</li>
+                        <li>✓ Multi-device dashboard</li>
+                        <li>✓ Bulk CSV upload</li>
+                        <li>✓ White-labeled PDF reports</li>
+                        <li>✓ Priority support</li>
+                        <li>✓ Custom CVE watch list</li>
+                    </ul>
+                    <a href="/contact" class="btn btn-secondary">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Webcam.org • <a href="/privacy.html">Privacy</a> • <a href="/blog/">Blog</a> • <a href="/docs">Docs</a> • <a href="/test/">Test Camera</a></p>
+        </div>
+    </footer>
+
+    <script>
+        async function runScan(event) {
+            event.preventDefault();
+
+            const cameraModel = document.getElementById('cameraModel').value.trim();
+            const resultsDiv = document.getElementById('results');
+
+            // Show loading state
+            resultsDiv.innerHTML = '<div style="text-align:center; padding:3rem;"><p style="font-size:1.25rem;">🔍 Scanning database...</p></div>';
+            resultsDiv.style.display = 'block';
+
+            try {
+                // Call real API
+                const response = await fetch(`/api/firmware-shield/scan?model=${encodeURIComponent(cameraModel)}&tier=free`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Scan failed');
+                }
+
+                // Display real results
+                displayRealResults(data, cameraModel);
+
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="status-banner status-risk">
+                        ⚠️ SCAN ERROR
+                    </div>
+                    <div class="result-details">
+                        <p>Unable to complete scan. Please try again or contact support.</p>
+                        <p style="color:#666; margin-top:1rem; font-size:0.9rem;">Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayRealResults(data, cameraModel) {
+            const resultsDiv = document.getElementById('results');
+            let statusClass, statusText, details;
+
+            // Determine status based on API response
+            if (data.status === 'vulnerable') {
+                statusClass = 'status-vulnerable';
+                statusText = '🚨 CRITICAL VULNERABILITIES DETECTED';
+            } else if (data.status === 'risks_detected') {
+                statusClass = 'status-risk';
+                statusText = '⚠️ VULNERABILITIES DETECTED';
+            } else {
+                statusClass = 'status-secure';
+                statusText = '✓ NO CRITICAL THREATS DETECTED';
+            }
+
+            // Build vulnerability details from API data
+            let vulnItems = '';
+            if (data.vulnerabilities && data.vulnerabilities.length > 0) {
+                data.vulnerabilities.forEach(vuln => {
+                    vulnItems += `
+                        <div class="vulnerability-item">
+                            <strong>${vuln.cve_id}</strong> - ${vuln.description.substring(0, 150)}...<br>
+                            <strong>Severity:</strong> ${vuln.severity} (${vuln.base_score}/10)<br>
+                            <strong>Published:</strong> ${vuln.published_date}<br>
+                            <strong>Affected Versions:</strong> ${vuln.vulnerable_versions || 'See CVE details'}<br>
+                            <strong>Fix:</strong> ${vuln.patch_version || 'See vendor advisory'}
+                        </div>
+                    `;
+                });
+            }
+
+            details = `
+                <div class="result-details">
+                    <h3>Scan Results for ${cameraModel}</h3>
+                    <p><strong>${data.results_shown} vulnerabilities found</strong></p>
+                    ${vulnItems}
+                    ${data.results_shown > 0 ? '<p style="margin-top:1rem; color:#c62828; font-weight:600;">⚠️ Free tier shows top 2 critical/high severity CVEs only. Upgrade to see all vulnerabilities.</p>' : ''}
+                </div>
+            `;
+
+            resultsDiv.innerHTML = `
+                <div class="status-banner ${statusClass}">
+                    ${statusText}
+                </div>
+                ${details}
+                <div class="upgrade-block">
+                    <h3>🔐 Upgrade to Pro Audit - $5/month</h3>
+                    <p>Get full CVE database scan, weekly monitoring, and email alerts for new exploits.</p>
+                    <ul class="upgrade-features">
+                        <li>Full database scan of ALL known CVEs (low, medium, high, critical)</li>
+                        <li>Weekly automated monitoring with email alerts</li>
+                        <li>Save and monitor up to 5 camera models</li>
+                        <li>Direct links to patches and Webcam.org ONVIF setup guides</li>
+                        <li>Includes encrypted remote access via Basic Relay</li>
+                    </ul>
+                    <a href="/pricing" class="btn btn-primary" style="margin-top:1rem;">Start 14-Day Free Trial →</a>
+                    <p style="margin-top:1rem; font-size:0.875rem; opacity:0.9;">No credit card required for trial. Cancel anytime.</p>
+                </div>
+            `;
+
+            resultsDiv.style.display = 'block';
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>

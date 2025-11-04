@@ -1,0 +1,42 @@
+{
+  "name": "webcam-org-desktop",
+  "version": "0.1.0",
+  "description": "Electron desktop uploader for webcam.org USB webcams.",
+  "main": "src/main.js",
+  "author": "webcam.org",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron .",
+    "start": "electron .",
+    "package": "electron-builder --dir",
+    "make": "electron-builder --win",
+    "build": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "org.webcam.desktop",
+    "productName": "webcam.org Desktop",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "target": "nsis",
+      "artifactName": "webcam-org-setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "webcam.org Desktop"
+    }
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}

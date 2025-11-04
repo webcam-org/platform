@@ -1,0 +1,14 @@
+# robots.txt for webcam.org
+
+User-agent: *
+Allow: /
+
+# Disallow account/admin areas
+Disallow: /login
+Disallow: /register
+Disallow: /account/
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://webcam.org/sitemap.xml
