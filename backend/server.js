@@ -51,6 +51,33 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+// Admin middleware (for now, just checks for admin email - TODO: add role field)
+const requireAdmin = async (req, res, next) => {
+  try {
+    const result = await pool.query(
+      'SELECT email FROM users WHERE id = $1',
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(403).json({ success: false, error: 'Admin access required' });
+    }
+
+    // TODO: Replace with proper role check when roles are added
+    const email = result.rows[0].email;
+    const isAdmin = email.endsWith('@webcam.org') || email === process.env.ADMIN_EMAIL;
+
+    if (!isAdmin) {
+      return res.status(403).json({ success: false, error: 'Admin access required' });
+    }
+
+    next();
+  } catch (error) {
+    console.error('Admin check error:', error);
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+};
+
 // Database
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://postgres@localhost/webcamorg'
@@ -547,6 +574,168 @@ app.post('/api/notifications/send', async (req, res) => {
     }
   } catch (error) {
     console.error('Notification error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Admin/Moderation endpoints
+app.get('/api/admin/stats', [authenticateToken, requireAdmin], async (req, res) => {
+  try {
+    const stats = await pool.query(`
+      SELECT
+        (SELECT COUNT(*) FROM cameras WHERE is_public = true AND is_approved = false) as pending_cameras,
+        (SELECT COUNT(*) FROM camera_reports WHERE status = 'pending') as open_reports,
+        (SELECT COUNT(*) FROM cameras WHERE is_approved = true AND created_at > NOW() - INTERVAL '7 days') as recent_approvals
+    `);
+
+    res.json({
+      success: true,
+      stats: stats.rows[0]
+    });
+  } catch (error) {
+    console.error('Admin stats error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/admin/cameras/queue', [authenticateToken, requireAdmin], async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT c.id, c.name, c.description, c.city, c.state, c.owner_id,
+             u.username, u.email,
+             ST_Y(c.location::geometry) as lat,
+             ST_X(c.location::geometry) as lon,
+             c.thumbnail_url, c.created_at
+      FROM cameras c
+      JOIN users u ON c.owner_id = u.id
+      WHERE c.is_public = true AND c.is_approved = false
+      ORDER BY c.created_at ASC
+      LIMIT 50
+    `);
+
+    res.json({
+      success: true,
+      cameras: result.rows
+    });
+  } catch (error) {
+    console.error('Camera queue error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/admin/cameras/:id/approve', [authenticateToken, requireAdmin], async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await pool.query(
+      'UPDATE cameras SET is_approved = true, updated_at = NOW() WHERE id = $1',
+      [id]
+    );
+
+    console.log(`✅ Camera approved: ${id} by ${req.user.email}`);
+
+    res.json({ success: true, message: 'Camera approved' });
+  } catch (error) {
+    console.error('Approve camera error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/admin/cameras/:id/reject', [authenticateToken, requireAdmin], async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    await pool.query(
+      'UPDATE cameras SET is_approved = false, is_public = false, updated_at = NOW() WHERE id = $1',
+      [id]
+    );
+
+    console.log(`❌ Camera rejected: ${id} (reason: ${reason || 'none'})`);
+
+    res.json({ success: true, message: 'Camera rejected' });
+  } catch (error) {
+    console.error('Reject camera error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.get('/api/admin/reports', [authenticateToken, requireAdmin], async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT r.id, r.camera_id, r.reporter_id, r.reason, r.comment, r.status,
+             c.name as camera_name, c.owner_id,
+             u.username as reporter_username,
+             r.created_at
+      FROM camera_reports r
+      JOIN cameras c ON r.camera_id = c.id
+      LEFT JOIN users u ON r.reporter_id = u.id
+      WHERE r.status = 'pending'
+      ORDER BY r.created_at ASC
+      LIMIT 50
+    `);
+
+    res.json({
+      success: true,
+      reports: result.rows
+    });
+  } catch (error) {
+    console.error('Get reports error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/admin/reports/:id/dismiss', [authenticateToken, requireAdmin], async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await pool.query(
+      'UPDATE camera_reports SET status = $1, updated_at = NOW() WHERE id = $2',
+      ['dismissed', id]
+    );
+
+    console.log(`✓ Report dismissed: ${id}`);
+
+    res.json({ success: true, message: 'Report dismissed' });
+  } catch (error) {
+    console.error('Dismiss report error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/admin/reports/:id/remove-camera', [authenticateToken, requireAdmin], async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Get camera_id from report
+    const report = await pool.query(
+      'SELECT camera_id FROM camera_reports WHERE id = $1',
+      [id]
+    );
+
+    if (report.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Report not found' });
+    }
+
+    const camera_id = report.rows[0].camera_id;
+
+    // Remove camera (set is_public=false, is_approved=false)
+    await pool.query(
+      'UPDATE cameras SET is_public = false, is_approved = false WHERE id = $1',
+      [camera_id]
+    );
+
+    // Mark report as resolved
+    await pool.query(
+      'UPDATE camera_reports SET status = $1, updated_at = NOW() WHERE id = $2',
+      ['resolved', id]
+    );
+
+    console.log(`🚫 Camera removed: ${camera_id} (report: ${id})`);
+
+    res.json({ success: true, message: 'Camera removed from public directory' });
+  } catch (error) {
+    console.error('Remove camera error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
