@@ -551,8 +551,158 @@ app.post('/api/notifications/send', async (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, () => {
+// Desktop app endpoints
+app.post('/api/desktop/register', async (req, res) => {
+  try {
+    const { device_id, os, webcam_info, user_id } = req.body;
+
+    if (!device_id) {
+      return res.status(400).json({
+        success: false,
+        error: 'device_id is required'
+      });
+    }
+
+    // Generate API key for desktop app
+    const api_key = jwt.sign(
+      { device_id, type: 'desktop', user_id },
+      JWT_SECRET,
+      { expiresIn: '365d' }
+    );
+
+    console.log(`💻 Desktop app registered: ${device_id} (OS: ${os})`);
+
+    res.json({
+      success: true,
+      api_key,
+      config: {
+        api_url: process.env.API_URL || 'http://localhost:4000',
+        upload_endpoint: '/api/desktop/upload',
+        event_endpoint: '/api/desktop/events'
+      }
+    });
+  } catch (error) {
+    console.error('Desktop registration error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+app.post('/api/desktop/events', async (req, res) => {
+  try {
+    const apiKey = req.headers['x-api-key'];
+
+    if (!apiKey) {
+      return res.status(401).json({ success: false, error: 'API key required' });
+    }
+
+    // Verify API key
+    const decoded = jwt.verify(apiKey, JWT_SECRET);
+
+    const { event_type, confidence, timestamp, camera_name } = req.body;
+
+    console.log(`💻 Desktop event: ${event_type} from ${decoded.device_id}`);
+
+    // Save event (using device_id as camera identifier)
+    await pool.query(
+      `INSERT INTO camera_events (camera_id, event_type, confidence, occurred_at)
+       VALUES ($1, $2, $3, $4)`,
+      [decoded.device_id, event_type, confidence || 0, timestamp || new Date()]
+    );
+
+    res.json({ success: true, message: 'Event received' });
+  } catch (error) {
+    console.error('Desktop event error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Start HTTP server
+const server = app.listen(PORT, () => {
   console.log(`🚀 webcam.org API running on port ${PORT}`);
   console.log(`   Health: http://localhost:${PORT}/health`);
 });
+
+// WebRTC Signaling Server (WebSocket)
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ server, path: '/signaling' });
+
+const peers = new Map(); // Map of peer connections
+
+wss.on('connection', (ws, req) => {
+  const peerId = req.headers['sec-websocket-key'];
+
+  console.log(`🔗 WebRTC peer connected: ${peerId.substring(0, 8)}...`);
+
+  peers.set(peerId, { ws, metadata: {} });
+
+  ws.on('message', (message) => {
+    try {
+      const data = JSON.parse(message);
+
+      switch (data.type) {
+        case 'register':
+          // Register peer as camera or viewer
+          peers.get(peerId).metadata = {
+            role: data.role, // 'camera' or 'viewer'
+            camera_id: data.camera_id,
+            user_id: data.user_id
+          };
+          console.log(`   Registered as ${data.role}: ${data.camera_id || data.user_id}`);
+          ws.send(JSON.stringify({ type: 'registered', peer_id: peerId }));
+          break;
+
+        case 'offer':
+        case 'answer':
+        case 'ice-candidate':
+          // Forward signaling messages to target peer
+          const targetId = data.target_peer_id;
+          const targetPeer = peers.get(targetId);
+
+          if (targetPeer) {
+            targetPeer.ws.send(JSON.stringify({
+              ...data,
+              from_peer_id: peerId
+            }));
+            console.log(`   Forwarded ${data.type} to ${targetId.substring(0, 8)}...`);
+          } else {
+            ws.send(JSON.stringify({
+              type: 'error',
+              message: 'Target peer not found'
+            }));
+          }
+          break;
+
+        case 'list-cameras':
+          // List available camera streams
+          const cameras = [];
+          peers.forEach((peer, id) => {
+            if (peer.metadata.role === 'camera') {
+              cameras.push({
+                peer_id: id,
+                camera_id: peer.metadata.camera_id
+              });
+            }
+          });
+          ws.send(JSON.stringify({
+            type: 'camera-list',
+            cameras
+          }));
+          break;
+      }
+    } catch (error) {
+      console.error('WebSocket message error:', error);
+      ws.send(JSON.stringify({ type: 'error', message: error.message }));
+    }
+  });
+
+  ws.on('close', () => {
+    console.log(`🔌 Peer disconnected: ${peerId.substring(0, 8)}...`);
+    peers.delete(peerId);
+  });
+
+  ws.on('error', (error) => {
+    console.error('WebSocket error:', error);
+  });
+});
+
+console.log(`🔗 WebRTC signaling server on ws://localhost:${PORT}/signaling`);
