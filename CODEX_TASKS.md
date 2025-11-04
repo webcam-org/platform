@@ -2,6 +2,9 @@
 
 **Your focus:** Windows desktop app for USB webcams + Mobile app UI implementation
 
+**GitHub Repo:** https://github.com/webcam-org/platform
+**Backend API Docs:** See `backend/API_READY.md`
+
 ---
 
 ## 🖥️ PRIORITY: Windows Desktop App (Electron)
