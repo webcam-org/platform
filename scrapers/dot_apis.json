@@ -1,0 +1,51 @@
+{
+  "FL": {
+    "name": "Florida Department of Transportation",
+    "api_url": "https://fl511.com/map/mapIcons/Cameras",
+    "type": "json",
+    "estimated_cameras": 500,
+    "notes": "FL511 traffic camera system"
+  },
+  "CA": {
+    "name": "California Department of Transportation",
+    "api_url": "https://cwwp2.dot.ca.gov/data/d7/cctv/cctvStatusD07.json",
+    "type": "json",
+    "estimated_cameras": 2000,
+    "notes": "Caltrans CCTV - District 7 (Los Angeles). Has districts 1-12."
+  },
+  "TX": {
+    "name": "Texas Department of Transportation",
+    "api_url": "https://its.txdot.gov/ITS_WEB/FrontEnd/default.html",
+    "type": "html_scrape",
+    "estimated_cameras": 1500,
+    "notes": "Requires HTML parsing or browser automation"
+  },
+  "NY": {
+    "name": "New York State DOT",
+    "api_url": "https://511ny.org/map/Cctv/",
+    "type": "json",
+    "estimated_cameras": 800,
+    "notes": "NY 511 camera system"
+  },
+  "WA": {
+    "name": "Washington State DOT",
+    "api_url": "https://www.wsdot.com/traffic/api/cameras/",
+    "type": "json",
+    "estimated_cameras": 600,
+    "notes": "WSDOT traffic cameras API"
+  },
+  "CO": {
+    "name": "Colorado Department of Transportation",
+    "api_url": "https://data.cotrip.org/xml/camera/cameralist.xml",
+    "type": "xml",
+    "estimated_cameras": 400,
+    "notes": "COTRIP XML feed"
+  },
+  "AZ": {
+    "name": "Arizona Department of Transportation",
+    "api_url": "https://az511.gov/List/GetData?typeName=camera",
+    "type": "json",
+    "estimated_cameras": 300,
+    "notes": "AZ 511 camera data"
+  }
+}

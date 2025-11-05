@@ -35,6 +35,10 @@
       "shortcutName": "webcam.org Desktop"
     }
   },
+  "dependencies": {
+    "node-machine-id": "^1.1.12",
+    "electron-store": "^8.1.0"
+  },
   "devDependencies": {
     "electron": "^30.0.0",
     "electron-builder": "^24.13.3"

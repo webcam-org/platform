@@ -43,6 +43,8 @@
       <div class="logo">webcam.org Admin</div>
       <nav>
         <a href="#" onclick="showDashboard()">Dashboard</a>
+        <a href="#" onclick="showCameraQueue()">Camera Queue</a>
+        <a href="#" onclick="showReports()">Reports</a>
         <a href="#" onclick="showUserManagement()">User Management</a>
         <a href="#" onclick="logout()">Logout</a>
       </nav>
@@ -70,29 +72,39 @@
         <h2>Camera Moderation Queue</h2>
         <div id="camera-queue"></div>
 
-        <div id="camera-review-modal" class="modal">
-          <div class="modal-content">
-            <span class="close-button" onclick="closeCameraReviewModal()">&times;</span>
-            <h2>Review Camera: <span id="review-camera-name"></span></h2>
-            <div id="review-camera-details"></div>
-          </div>
-        </div>
-
         <h2>Open Reports</h2>
         <div id="open-reports"></div>
+      </div>
 
-        <div id="report-handling-modal" class="modal">
-          <div class="modal-content">
-            <span class="close-button" onclick="closeReportHandlingModal()">&times;</span>
-            <h2>Handle Report for: <span id="report-camera-name"></span></h2>
-            <div id="report-details"></div>
-          </div>
-        </div>
+      <div id="camera-queue-view" style="display:none;">
+        <h1>Camera Moderation Queue</h1>
+        <div id="camera-queue-list"></div>
+      </div>
+
+      <div id="reports-view" style="display:none;">
+        <h1>Open Reports</h1>
+        <div id="reports-list"></div>
       </div>
 
       <div id="user-management-view" style="display:none;">
         <h1>User Management</h1>
         <div id="user-list"></div>
+      </div>
+
+      <div id="camera-review-modal" class="modal">
+        <div class="modal-content">
+          <span class="close-button" onclick="closeCameraReviewModal()">&times;</span>
+          <h2>Review Camera: <span id="review-camera-name"></span></h2>
+          <div id="review-camera-details"></div>
+        </div>
+      </div>
+
+      <div id="report-handling-modal" class="modal">
+        <div class="modal-content">
+          <span class="close-button" onclick="closeReportHandlingModal()">&times;</span>
+          <h2>Handle Report for: <span id="report-camera-name"></span></h2>
+          <div id="report-details"></div>
+        </div>
       </div>
     </div>
   </main>
@@ -125,12 +137,56 @@
 
     function showDashboard() {
       document.getElementById('dashboard-view').style.display = 'block';
+      document.getElementById('camera-queue-view').style.display = 'none';
+      document.getElementById('reports-view').style.display = 'none';
       document.getElementById('user-management-view').style.display = 'none';
       updateDashboard();
     }
 
+    async function showCameraQueue() {
+      document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('camera-queue-view').style.display = 'block';
+      document.getElementById('reports-view').style.display = 'none';
+      document.getElementById('user-management-view').style.display = 'none';
+      const cameraQueue = await fetchData('cameras/queue');
+      const cameraQueueListDiv = document.getElementById('camera-queue-list');
+      cameraQueueListDiv.innerHTML = cameraQueue.map(camera => `
+        <div class="queue-item">
+          <div>
+            <h3>${camera.name}</h3>
+            <p>${camera.description}</p>
+          </div>
+          <div>
+            <button onclick="openCameraReviewModal('${camera.id}')">Review</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function showReports() {
+      document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('camera-queue-view').style.display = 'none';
+      document.getElementById('reports-view').style.display = 'block';
+      document.getElementById('user-management-view').style.display = 'none';
+      const openReports = await fetchData('reports');
+      const reportsListDiv = document.getElementById('reports-list');
+      reportsListDiv.innerHTML = openReports.map(report => `
+        <div class="report-item">
+          <div>
+            <h3>Report for ${report.camera_name}</h3>
+            <p>Reason: ${report.reason}</p>
+          </div>
+          <div>
+            <button onclick="openReportHandlingModal('${report.id}')">Handle Report</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
     async function showUserManagement() {
       document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('camera-queue-view').style.display = 'none';
+      document.getElementById('reports-view').style.display = 'none';
       document.getElementById('user-management-view').style.display = 'block';
       const users = await fetchData('users'); // Assuming API has /api/admin/users endpoint
       const userListDiv = document.getElementById('user-list');
@@ -170,27 +226,76 @@
       showUserManagement();
     }
 
+    async function updateDashboard() {
+      const stats = await fetchData('stats');
+      if (!stats) return; // If logout happened due to 401
+
+      document.getElementById('pending-cameras-count').textContent = stats.pending_cameras;
+      document.getElementById('open-reports-count').textContent = stats.open_reports;
+
+      const recentlyApproved = stats.recently_approved_cameras || []; // Assuming API returns this
+      const recentlyApprovedDiv = document.getElementById('recently-approved-cameras');
+      recentlyApprovedDiv.innerHTML = recentlyApproved.map(camera => `
+        <div class="queue-item">
+          <div>
+            <h3>${camera.name}</h3>
+            <p>${camera.description}</p>
+          </div>
+        </div>
+      `).join('');
+
+      const cameraQueue = await fetchData('cameras/queue');
+      if (!cameraQueue) return;
+      const cameraQueueDiv = document.getElementById('camera-queue');
+      cameraQueueDiv.innerHTML = cameraQueue.map(camera => `
+        <div class="queue-item">
+          <div>
+            <h3>${camera.name}</h3>
+            <p>${camera.description}</p>
+          </div>
+          <div>
+            <button onclick="openCameraReviewModal('${camera.id}')">Review</button>
+          </div>
+        </div>
+      `).join('');
+
+      const openReports = await fetchData('reports');
+      if (!openReports) return;
+      const openReportsDiv = document.getElementById('open-reports');
+      openReportsDiv.innerHTML = openReports.map(report => `
+        <div class="report-item">
+          <div>
+            <h3>Report for ${report.camera_name}</h3>
+            <p>Reason: ${report.reason}</p>
+          </div>
+          <div>
+            <button onclick="openReportHandlingModal('${report.id}')">Handle Report</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
     async function approveCamera(id) {
       await fetch(`${API_BASE_URL}/cameras/${id}/approve`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
-      updateDashboard();
+      showCameraQueue();
       closeCameraReviewModal();
     }
 
     async function rejectCamera(id) {
       await fetch(`${API_BASE_URL}/cameras/${id}/reject`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
-      updateDashboard();
+      showCameraQueue();
       closeCameraReviewModal();
     }
 
     async function dismissReport(id) {
       await fetch(`${API_BASE_URL}/reports/${id}/dismiss`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
-      updateDashboard();
+      showReports();
       closeReportHandlingModal();
     }
 
     async function removeCamera(id) {
       await fetch(`${API_BASE_URL}/reports/${id}/remove-camera`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
-      updateDashboard();
+      showReports();
       closeReportHandlingModal();
     }
 
@@ -228,7 +333,7 @@
       document.getElementById('report-handling-modal').style.display = 'none';
     }
 
-    updateDashboard(); // Initial view
+    showDashboard(); // Initial view
   </script>
 </body>
 </html>
