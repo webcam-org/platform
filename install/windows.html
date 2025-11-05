@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Install on Windows - webcam.org</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { color: #1a73e8; }
+    h2 { color: #333; margin-top: 30px; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; }
+    .step { background: #f8f9fa; padding: 20px; margin: 20px 0; border-left: 4px solid #1a73e8; border-radius: 4px; }
+    .step h3 { margin-top: 0; color: #1a73e8; }
+    code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
+    pre { background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 6px; overflow-x: auto; }
+    .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px; }
+    .note strong { color: #856404; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Install webcam.org on Windows</h1>
+    <p>Run Frigate NVR with webcam.org integration on Windows using Docker Desktop</p>
+
+    <h2>Prerequisites</h2>
+    <div class="step">
+      <h3>Step 1: Install Docker Desktop</h3>
+      <ol>
+        <li>Download Docker Desktop: <a href="https://www.docker.com/products/docker-desktop" target="_blank">https://www.docker.com/products/docker-desktop</a></li>
+        <li>Run the installer and follow the wizard</li>
+        <li>Restart your computer when prompted</li>
+        <li>Launch Docker Desktop and wait for it to start</li>
+      </ol>
+      <p><strong>Verify Docker is running:</strong> You should see the Docker icon in your system tray</p>
+    </div>
+
+    <h2>Installation</h2>
+
+    <div class="step">
+      <h3>Step 2: Download Installation Files</h3>
+      <p>Download the webcam.org + Frigate configuration:</p>
+      <ol>
+        <li>Open PowerShell (right-click Start → Windows PowerShell)</li>
+        <li>Create a directory:</li>
+      </ol>
+      <pre>mkdir C:\webcam-org
+cd C:\webcam-org</pre>
+      <ol start="3">
+        <li>Download docker-compose.yml:</li>
+      </ol>
+      <pre>Invoke-WebRequest -Uri https://webcam.org/install/docker-compose.yml -OutFile docker-compose.yml</pre>
+      <ol start="4">
+        <li>Download integration plugin:</li>
+      </ol>
+      <pre>mkdir integration
+Invoke-WebRequest -Uri https://webcam.org/install/integration.py -OutFile integration\integration.py</pre>
+    </div>
+
+    <div class="step">
+      <h3>Step 3: Configure Frigate</h3>
+      <p>Create Frigate config for your webcam:</p>
+      <ol>
+        <li>Create config directory:</li>
+      </ol>
+      <pre>mkdir config</pre>
+      <ol start="2">
+        <li>Create <code>config\config.yml</code> with this content:</li>
+      </ol>
+      <pre>mqtt:
+  enabled: true
+  host: mqtt
+
+cameras:
+  webcam:
+    enabled: true
+    ffmpeg:
+      inputs:
+        - path: /dev/video0  # For USB webcam
+          roles:
+            - detect
+    detect:
+      enabled: true
+      width: 1280
+      height: 720</pre>
+    </div>
+
+    <div class="step">
+      <h3>Step 4: Start Frigate</h3>
+      <p>In PowerShell:</p>
+      <pre>docker-compose up -d</pre>
+      <p>This starts:</p>
+      <ul>
+        <li>Frigate NVR (http://localhost:5001)</li>
+        <li>MQTT broker</li>
+        <li>webcam.org integration plugin</li>
+      </ul>
+    </div>
+
+    <div class="note">
+      <strong>Note:</strong> USB webcam access in Docker on Windows can be tricky. For best results:
+      <ul style="margin-top: 10px;">
+        <li>Use an IP camera (recommended for Windows)</li>
+        <li>Or install WSL2 (Windows Subsystem for Linux) for USB webcam support</li>
+      </ul>
+    </div>
+
+    <h2>Next Steps</h2>
+    <div class="step">
+      <h3>Step 5: Download Mobile App</h3>
+      <p>To receive push notifications when motion is detected:</p>
+      <ol>
+        <li>Download webcam.org mobile app (iOS or Android)</li>
+        <li>Create an account</li>
+        <li>Your cameras will automatically appear!</li>
+      </ol>
+    </div>
+
+    <h2>Troubleshooting</h2>
+    <p><strong>Docker Desktop won't start:</strong> Make sure Hyper-V or WSL2 is enabled in Windows Features</p>
+    <p><strong>Can't access webcam:</strong> Use an IP camera instead, or install WSL2 for USB support</p>
+    <p><strong>Need help?</strong> Join our community: <a href="https://github.com/webcam-org/platform/discussions">GitHub Discussions</a></p>
+
+    <p style="margin-top: 40px; text-align: center;">
+      <a href="/download" style="color: #1a73e8;">← Back to Downloads</a>
+    </p>
+  </div>
+</body>
+</html>
