@@ -20,5 +20,8 @@ contextBridge.exposeInMainWorld('desktopBridge', {
   chooseRecordingDirectory: async () => {
     const settings = await ipcRenderer.invoke('settings:chooseRecordingDirectory');
     return settings;
+  },
+  sendMotionEvent: async (eventType, confidence) => {
+    return await ipcRenderer.invoke('motion:send', eventType, confidence);
   }
 });

@@ -29,3 +29,4 @@ __pycache__/
 media/
 clips/
 recordings/
+desktop-app/dist/

@@ -20,6 +20,7 @@ let cachedDevices = [];
 let hasRequestedMediaAccess = false;
 let previewStream = null;
 let deviceSource = 'unknown';
+let motionDetector = null;
 
 pingButton.addEventListener('click', async () => {
   statusEl.textContent = 'Checking...';
@@ -234,6 +235,19 @@ async function startPreview() {
     previewVideo.classList.add('active');
     previewPlaceholder.classList.add('hidden');
     statusEl.textContent = `Previewing ${selectedDevice.label}`;
+
+    // Start motion detection
+    motionDetector = new MotionDetector(previewVideo, {
+      threshold: 30,
+      motionThreshold: 0.02,
+      checkInterval: 1000
+    });
+
+    motionDetector.start(() => {
+      console.log('Motion detected!');
+      // Send event to backend
+      window.desktopBridge.sendMotionEvent('motion', 0.85);
+    });
   } catch (error) {
     statusEl.textContent = `Preview failed: ${error.message ?? error}`;
     previewVideo.classList.remove('active');
@@ -243,6 +257,11 @@ async function startPreview() {
 }
 
 async function stopPreview() {
+  if (motionDetector) {
+    motionDetector.stop();
+    motionDetector = null;
+  }
+
   if (!previewStream) {
     updatePreviewPlaceholder();
     return;

@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain, dialog, Menu, Tray, nativeImage } = require
 
 const cameraManager = require('./main/camera-manager');
 const settingsStore = require('./main/settings-store');
+const { registerDesktop, sendMotionEvent } = require('./main/api-client');
 
 let cachedSettings = { ...settingsStore.defaultSettings };
 let mainWindow;
@@ -115,7 +116,10 @@ function applyAutoLaunchSetting(enable) {
 
 app.setAppUserModelId('org.webcam.desktop');
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  // Register with backend on first run
+  await registerDesktop();
+
   cachedSettings = settingsStore.loadSettings();
   applyAutoLaunchSetting(cachedSettings.autoLaunch);
   createMainWindow();
@@ -187,4 +191,8 @@ ipcMain.handle('settings:chooseRecordingDirectory', async () => {
   } catch (error) {
     return cachedSettings;
   }
+});
+
+ipcMain.handle('motion:send', async (event, eventType, confidence) => {
+  return await sendMotionEvent(eventType, confidence);
 });

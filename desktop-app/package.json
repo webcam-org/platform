@@ -24,7 +24,8 @@
     },
     "win": {
       "target": "nsis",
-      "artifactName": "webcam-org-setup-${version}.${ext}"
+      "artifactName": "webcam-org-setup-${version}.${ext}",
+      "sign": null
     },
     "nsis": {
       "oneClick": false,
