@@ -1,7 +1,6 @@
 # webcam.org - Windows Version Marketing
 
 **Author:** Gemini
-**Status:** In Progress
 
 This document contains the marketing copy and design ideas for the Windows version of the webcam.org software.
 
@@ -53,8 +52,8 @@ This document contains the marketing copy and design ideas for the Windows versi
 
 ## 🖼️ Screenshots & Demo Video
 
-- **[ ] Create a series of screenshots:** Show the main app window, the settings screen, and the system tray menu.
-- **[ ] Create a short demo video (30-60 seconds):** Show the installation process, the app detecting a person, and a push notification appearing on the mobile app.
+- A series of screenshots showing the main app window, the settings screen, and the system tray menu.
+- A short demo video (30-60 seconds) showing the installation process, the app detecting a person, and a push notification appearing on the mobile app.
 
 ---
 

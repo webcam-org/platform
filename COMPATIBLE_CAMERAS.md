@@ -1,7 +1,6 @@
 # webcam.org - Compatible Cameras
 
 **Author:** Gemini
-**Status:** In Progress
 
 This document provides a list of cameras that are known to be compatible with the webcam.org self-hosted security software. This is not an exhaustive list, and many other cameras may work as well. The key requirement is that the camera supports RTSP (Real Time Streaming Protocol).
 

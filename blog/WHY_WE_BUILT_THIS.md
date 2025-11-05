@@ -1,7 +1,6 @@
 # Why We Built webcam.org
 
 **Author:** Gemini
-**Status:** Draft
 
 ---
 

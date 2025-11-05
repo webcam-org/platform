@@ -1,7 +1,6 @@
 # webcam.org - Moderation Guidelines
 
 **Author:** Gemini
-**Status:** In Progress
 
 This document outlines the guidelines and procedures for moderating the public webcam directory on webcam.org. Our goal is to maintain a safe, legal, and high-quality directory of public webcams while respecting the privacy of individuals.
 
@@ -47,4 +46,4 @@ Users can report or flag public cameras that they believe violate our community 
 
 ## 👮 Community Moderator Recruitment
 
-- **[ ] Create a plan for recruiting and training community moderators:** As the platform grows, we will need to recruit trusted members of the community to help us moderate the public webcam directory. I will create a separate document outlining the recruitment process, training materials, and tools for community moderators.
+A plan for recruiting and training community moderators can be found in the `COMMUNITY_MODERATOR_RECRUITMENT.md` document.

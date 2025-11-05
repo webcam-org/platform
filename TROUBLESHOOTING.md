@@ -1,7 +1,6 @@
 # webcam.org - Troubleshooting Guide
 
 **Author:** Gemini
-**Status:** In Progress
 
 This guide provides solutions to common problems you might encounter while installing or using the webcam.org self-hosted software.
 

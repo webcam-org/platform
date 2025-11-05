@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>webcam.org - Admin Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; background: #f5f5f5; color: #333; }
+    header { background: #1a73e8; color: #fff; padding: 15px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+    header .logo { font-size: 24px; font-weight: bold; }
+    header nav a { color: #fff; text-decoration: none; margin-left: 20px; }
+    header nav a:hover { text-decoration: underline; }
+    main { padding: 20px; max-width: 1200px; margin: 20px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { color: #1a73e8; margin-bottom: 20px; }
+    h2 { color: #333; margin-top: 30px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    .dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: #e8f0fe; padding: 20px; border-radius: 8px; text-align: center; }
+    .stat-card h3 { margin: 0; color: #1a73e8; font-size: 1.2em; }
+    .stat-card p { font-size: 2em; font-weight: bold; color: #333; margin-top: 10px; }
+    .queue-item, .report-item { background: #f8f9fa; border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .queue-item h3, .report-item h3 { margin: 0; color: #1a73e8; }
+    .queue-item p, .report-item p { margin: 5px 0 0; color: #555; }
+    .queue-item button, .report-item button { background: #1a73e8; color: #fff; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-left: 10px; }
+    .queue-item button.reject, .report-item button.remove { background: #ea4335; }
+    .queue-item button:hover, .report-item button:hover { opacity: 0.9; }
+
+    .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+    .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    .close-button { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+    .close-button:hover, .close-button:focus { color: black; text-decoration: none; cursor: pointer; }
+
+    .user-item { background: #f8f9fa; border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .user-item h3 { margin: 0; color: #1a73e8; }
+    .user-item p { margin: 5px 0 0; color: #555; }
+    .user-item button { background: #1a73e8; color: #fff; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-left: 10px; }
+    .user-item button:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">webcam.org Admin</div>
+      <nav>
+        <a href="#" onclick="showDashboard()">Dashboard</a>
+        <a href="#" onclick="showUserManagement()">User Management</a>
+        <a href="#" onclick="logout()">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div id="dashboard-view">
+        <h1>Dashboard</h1>
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <h3>Pending Cameras</h3>
+            <p id="pending-cameras-count">0</p>
+          </div>
+          <div class="stat-card">
+            <h3>Open Reports</h3>
+            <p id="open-reports-count">0</p>
+          </div>
+        </div>
+
+        <h2>Recently Approved Cameras</h2>
+        <div id="recently-approved-cameras"></div>
+
+        <h2>Camera Moderation Queue</h2>
+        <div id="camera-queue"></div>
+
+        <div id="camera-review-modal" class="modal">
+          <div class="modal-content">
+            <span class="close-button" onclick="closeCameraReviewModal()">&times;</span>
+            <h2>Review Camera: <span id="review-camera-name"></span></h2>
+            <div id="review-camera-details"></div>
+          </div>
+        </div>
+
+        <h2>Open Reports</h2>
+        <div id="open-reports"></div>
+
+        <div id="report-handling-modal" class="modal">
+          <div class="modal-content">
+            <span class="close-button" onclick="closeReportHandlingModal()">&times;</span>
+            <h2>Handle Report for: <span id="report-camera-name"></span></h2>
+            <div id="report-details"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="user-management-view" style="display:none;">
+        <h1>User Management</h1>
+        <div id="user-list"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE_URL = '/api/admin';
+    let token = localStorage.getItem('admin_token');
+
+    if (!token) {
+      window.location.href = '/admin/login.html';
+    }
+
+    function logout() {
+      localStorage.removeItem('admin_token');
+      window.location.href = '/admin/login.html';
+    }
+
+    async function fetchData(endpoint) {
+      const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.status === 401) { // Token expired or invalid
+        logout();
+        return;
+      }
+      return response.json();
+    }
+
+    function showDashboard() {
+      document.getElementById('dashboard-view').style.display = 'block';
+      document.getElementById('user-management-view').style.display = 'none';
+      updateDashboard();
+    }
+
+    async function showUserManagement() {
+      document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('user-management-view').style.display = 'block';
+      const users = await fetchData('users'); // Assuming API has /api/admin/users endpoint
+      const userListDiv = document.getElementById('user-list');
+      userListDiv.innerHTML = users.map(user => `
+        <div class="user-item">
+          <h3>${user.email}</h3>
+          <p>Role: ${user.role}</p>
+          <button onclick="toggleModerator('${user.id}', '${user.role}')">${user.role === 'moderator' ? 'Revoke Moderator' : 'Make Moderator'}</button>
+          <button onclick="toggleBan('${user.id}', '${user.is_banned}')">${user.is_banned ? 'Unban' : 'Ban'}</button>
+        </div>
+      `).join('');
+    }
+
+    async function toggleModerator(id, currentRole) {
+      const newRole = currentRole === 'moderator' ? 'user' : 'moderator';
+      await fetch(`${API_BASE_URL}/users/${id}/role`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ role: newRole })
+      });
+      showUserManagement();
+    }
+
+    async function toggleBan(id, isBanned) {
+      const newStatus = !isBanned;
+      await fetch(`${API_BASE_URL}/users/${id}/ban`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ is_banned: newStatus })
+      });
+      showUserManagement();
+    }
+
+    async function approveCamera(id) {
+      await fetch(`${API_BASE_URL}/cameras/${id}/approve`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+      updateDashboard();
+      closeCameraReviewModal();
+    }
+
+    async function rejectCamera(id) {
+      await fetch(`${API_BASE_URL}/cameras/${id}/reject`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+      updateDashboard();
+      closeCameraReviewModal();
+    }
+
+    async function dismissReport(id) {
+      await fetch(`${API_BASE_URL}/reports/${id}/dismiss`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+      updateDashboard();
+      closeReportHandlingModal();
+    }
+
+    async function removeCamera(id) {
+      await fetch(`${API_BASE_URL}/reports/${id}/remove-camera`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+      updateDashboard();
+      closeReportHandlingModal();
+    }
+
+    async function openCameraReviewModal(id) {
+      const camera = await fetchData(`cameras/${id}`); // Assuming API has endpoint for single camera
+      document.getElementById('review-camera-name').textContent = camera.name;
+      document.getElementById('review-camera-details').innerHTML = `
+        <p>Description: ${camera.description}</p>
+        <p>Location: ${camera.location}</p>
+        <!-- Add video feed here -->
+        <button onclick="approveCamera('${camera.id}')">Approve</button>
+        <button onclick="rejectCamera('${camera.id}')">Reject</button>
+      `;
+      document.getElementById('camera-review-modal').style.display = 'block';
+    }
+
+    function closeCameraReviewModal() {
+      document.getElementById('camera-review-modal').style.display = 'none';
+    }
+
+    async function openReportHandlingModal(id) {
+      const report = await fetchData(`reports/${id}`); // Assuming API has endpoint for single report
+      document.getElementById('report-camera-name').textContent = report.camera_name;
+      document.getElementById('report-details').innerHTML = `
+        <p>Reason: ${report.reason}</p>
+        <p>Comment: ${report.comment}</p>
+        <!-- Add video feed of reported camera here -->
+        <button onclick="dismissReport('${report.id}')">Dismiss Report</button>
+        <button onclick="removeCamera('${report.camera_id}')">Remove Camera</button>
+      `;
+      document.getElementById('report-handling-modal').style.display = 'block';
+    }
+
+    function closeReportHandlingModal() {
+      document.getElementById('report-handling-modal').style.display = 'none';
+    }
+
+    updateDashboard(); // Initial view
+  </script>
+</body>
+</html>

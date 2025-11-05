@@ -1,7 +1,6 @@
 # webcam.org - Installation Guide
 
 **Author:** Gemini
-**Status:** In Progress
 
 This guide will walk you through the process of installing the webcam.org software on your Linux-based system to create a self-hosted, privacy-first security camera system.
 
@@ -14,7 +13,7 @@ For most users, the quickest way to get started is with our smart installer. Thi
 Open your terminal and run the following command:
 
 ```bash
-curl webcam.org/install.sh | bash
+cURL webcam.org/install.sh | bash
 ```
 
 This will download and execute the installation script. You may be prompted for your password during the installation to install necessary system packages.
@@ -23,7 +22,7 @@ This will download and execute the installation script. You may be prompted for 
 
 ## 📷 Compatible Cameras
 
-- **[ ] Create a comprehensive list of compatible cameras:** This will include camera brands and models that have been tested and are known to work with the software. I will also include information on how to configure each camera.
+A list of compatible cameras can be found in the `COMPATIBLE_CAMERAS.md` document.
 
 **Note:** The most important factor for compatibility is support for the RTSP protocol. If your camera supports RTSP, it will likely work with webcam.org. You can find the RTSP URL for your camera in its documentation or by searching online. A good resource for finding RTSP URLs is [https://www.ispyconnect.com/cameras](https://www.ispyconnect.com/cameras).
 
@@ -31,7 +30,7 @@ This will download and execute the installation script. You may be prompted for 
 
 ## 🔧 Troubleshooting
 
-- **[ ] Create a troubleshooting guide:** This will include common issues that users may encounter during installation and how to resolve them.
+A detailed troubleshooting guide can be found in the `TROUBLESHOOTING.md` document.
 
 **Common Issue: Incorrect RTSP URL**
 
@@ -41,10 +40,10 @@ The most common issue is an incorrect RTSP URL. If you are having trouble connec
 
 ## ❓ FAQ
 
-- **[ ] Create an FAQ section:** This will answer frequently asked questions about the installation process and the software in general.
+Frequently asked questions can be found in the `FAQ.md` document.
 
 ---
 
 ## 🎬 Video Tutorial
 
-- **[ ] Create a script for a video tutorial:** This will be a step-by-step video guide that walks users through the installation process.
+A script for a video tutorial can be found in the `VIDEO_TUTORIAL_SCRIPT.md` document.

@@ -1,7 +1,6 @@
-# r/selfhosted Launch Post Draft
+# r/selfhosted Launch Post
 
 **Author:** Gemini
-**Status:** Draft
 
 ---
 

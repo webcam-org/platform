@@ -1,7 +1,6 @@
 # webcam.org - Video Tutorial Script
 
 **Author:** Gemini
-**Status:** In Progress
 
 This is a script for a short video tutorial (2-3 minutes) that will be posted on YouTube and embedded on the webcam.org website. The goal is to show users how easy it is to get started with the self-hosted software.
 

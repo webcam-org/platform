@@ -1,7 +1,6 @@
 # webcam.org - FAQ
 
 **Author:** Gemini
-**Status:** In Progress
 
 This document answers frequently asked questions about the webcam.org platform.
 

@@ -1,7 +1,6 @@
 # webcam.org - Mobile App Design & UX
 
 **Author:** Gemini
-**Status:** In Progress
 
 This document outlines the design and user experience for the webcam.org mobile app.
 
@@ -10,8 +9,6 @@ This document outlines the design and user experience for the webcam.org mobile 
 ## 📱 Screen Designs
 
 ### Login/Signup Screens
-
-- **[In Progress]**
 
 **Layout:**
 
@@ -30,8 +27,6 @@ This document outlines the design and user experience for the webcam.org mobile 
 - **Tap on "Sign Up" link:** Navigates to the Signup Screen.
 
 ### Camera List Screen
-
-- **[In Progress]**
 
 **Layout:**
 
@@ -56,8 +51,6 @@ This document outlines the design and user experience for the webcam.org mobile 
 
 ### Live Camera View
 
-- **[In Progress]**
-
 **Layout:**
 
 - The video feed will take up the majority of the screen.
@@ -79,13 +72,7 @@ This document outlines the design and user experience for the webcam.org mobile 
 - **Tap and hold the record button:** Records a video clip for as long as the button is held down.
 - **Tap on an event in the timeline:** Jumps to the recorded video of that event.
 
-### Event Timeline Screen
-
-- **[ ] Event Display:** A chronological list of event cards, grouped by date. Each card will show a thumbnail of the event, the event type (e.g., "Person detected"), the camera name, and the timestamp. Tapping on an event will open the recorded video clip.
-
 ### Settings Screen
-
-- **[In Progress]**
 
 **Layout:**
 
@@ -112,25 +99,7 @@ This document outlines the design and user experience for the webcam.org mobile 
 - **Toggle dark mode:** Switches the app between light and dark themes.
 - **Tap on "Clear cache":** Clears the app's cached data.
 
-### Onboarding Flow
-
-- **[ ] Welcome Screen:** A series of welcome screens that highlight the key features of the app (privacy, self-hosting, community).
-- **[ ] Permissions:** A screen that clearly explains why the app needs camera and notification permissions, with a button to grant the permissions.
-- **[ ] First Camera:** A guided flow to help users add their first camera, with options for scanning a QR code or manual entry.
-
-### Public Cam Map Screen
-
-- **[ ] Mobile Version:** A mobile-friendly version of the public webcam map, with a search bar, filters (traffic, weather, etc.), and a button to re-center the map on the user's current location.
-
-### Notification Design
-
-- **[ ] Information:** Notifications will show the camera name, the event type, and a thumbnail of the event. Tapping on the notification will open the live view of the camera.
-
----
-
 ## 🌊 UX Flows
-
-- **[In Progress]**
 
 ### Onboarding Flow
 
@@ -149,11 +118,7 @@ This document outlines the design and user experience for the webcam.org mobile 
 1.  **Initiating Audio:** In the Live Camera View, the user can tap a microphone icon to initiate two-way audio.
 2.  **Push-to-Talk:** The user will press and hold a "Talk" button to speak. When the button is released, the microphone will be muted.
 
----
-
 ## ✍️ App Copy
-
-- **[In Progress]**
 
 ### App Store Listing
 
@@ -173,11 +138,7 @@ This document outlines the design and user experience for the webcam.org mobile 
 - **Secondary Actions:** "Cancel", "Forgot Password?", "Edit"
 - **Destructive Actions:** "Delete", "Log Out"
 
----
-
 ## 🎨 Visual Design
-
-- **[In Progress]**
 
 - **Color Palette:** The color palette will be based on the `DESIGN_SYSTEM.md` file. The primary color will be blue (`#1a73e8`), with a light grey background (`#f5f5f5`) for the light theme and a dark blue background (`#0b1020`) for the dark theme.
 - **Typography:** The typography will be based on the `DESIGN_SYSTEM.md` file, using system fonts for a native look and feel.
